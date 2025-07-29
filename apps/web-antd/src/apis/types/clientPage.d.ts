@@ -1,63 +1,47 @@
 /**
- *  接口 [创建页面配置]
- *  @标签 客户端页面配置模块/创建页面配置
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [CreateClientPageRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface CreateClientPageRequest {
-  /* 引用类型 */
-  data: BasePageConfigFieldsDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type CreateClientPageRequest = BasePageConfigFieldsDto;
 
 export type CreateClientPageResponse = IdDto;
 
 /**
- *  接口 [分页查询页面配置列表]
- *  @标签 客户端页面配置模块/分页查询页面配置列表
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ClientPagePageRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ClientPagePageRequest {
-  /* 单页大小，最大500，默认15 */
-  pageSize?: number;
-
-  /* 当前页码 */
-  pageIndex?: number;
-
-  /* 排序字段，json格式 */
-  orderBy?: string;
-
-  /* 开始时间 */
-  startDate?: string;
+export type ClientPagePageRequest = {
+  /* 页面权限级别 */
+  accessLevel?: number;
 
   /* 结束时间 */
   endDate?: string;
 
+  /* 排序字段，json格式 */
+  orderBy?: string;
+
   /* 页面编码（唯一标识） */
   pageCode?: string;
+
+  /* 当前页码 */
+  pageIndex?: number;
 
   /* 页面名称 */
   pageName?: string;
 
-  /* 页面权限级别 */
-  accessLevel?: number;
+  /* 单页大小，最大500，默认15 */
+  pageSize?: number;
 
   /* 页面状态 */
   pageStatus?: number;
 
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+  /* 开始时间 */
+  startDate?: string;
+};
 
 export type ClientPagePageResponse = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 列表数据 */
   list?: ClientPageConfigPageResponseDto[];
 
@@ -72,79 +56,51 @@ export type ClientPagePageResponse = {
 };
 
 /**
- *  接口 [根据ID查询页面配置详情]
- *  @标签 客户端页面配置模块/根据ID查询页面配置详情
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ClientPageDetailByIdRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ClientPageDetailByIdRequest {
+export type ClientPageDetailByIdRequest = {
   id: number;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+};
 
 export type ClientPageDetailByIdResponse = ClientPageConfigResponseDto;
 
 /**
- *  接口 [根据页面编码查询页面配置详情]
- *  @标签 客户端页面配置模块/根据页面编码查询页面配置详情
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ClientPageDetailByCodeRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ClientPageDetailByCodeRequest {
+export type ClientPageDetailByCodeRequest = {
   pageCode: string;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+};
 
 export type ClientPageDetailByCodeResponse = ClientPageConfigResponseDto;
 
 /**
- *  接口 [更新页面配置]
- *  @标签 客户端页面配置模块/更新页面配置
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [UpdateClientPageRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface UpdateClientPageRequest {
-  /* 引用类型 */
-  data: UpdateClientPageConfigDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type UpdateClientPageRequest = UpdateClientPageConfigDto;
 
 export type UpdateClientPageResponse = IdDto;
 
 /**
- *  接口 [批量软删除页面配置]
- *  @标签 客户端页面配置模块/批量软删除页面配置
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [BatchDeleteClientPageRequest]
+ *  @来源 客户端页面配置模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface BatchDeleteClientPageRequest {
-  /* 引用类型 */
-  data: IdsDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type BatchDeleteClientPageRequest = IdsDto;
 
 export type BatchDeleteClientPageResponse = CountDto;
 
 /**
  *  类型定义 [BasePageConfigFieldsDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type BasePageConfigFieldsDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 页面权限级别 */
   accessLevel: 0 | 1 | 2 | 3;
   /* 页面描述信息 */
@@ -157,7 +113,6 @@ export type BasePageConfigFieldsDto = {
   pagePath: string;
   /* 页面状态 */
   pageStatus: 0 | 1 | 2 | 3;
-
   /* 页面标题（用于SEO） */
   pageTitle?: string;
 };
@@ -165,12 +120,9 @@ export type BasePageConfigFieldsDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type IdDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 主键id */
   id: number;
 };
@@ -178,11 +130,9 @@ export type IdDto = {
 /**
  *  类型定义 [ClientPageConfigPageResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type ClientPageConfigPageResponseDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 页面权限级别 */
   accessLevel: 0 | 1 | 2 | 3;
   /* 创建时间 */
@@ -201,7 +151,6 @@ export type ClientPageConfigPageResponseDto = {
   pageTitle?: string;
   /* 更新时间 */
   updatedAt: string;
-
   /* 访问次数统计 */
   viewCount: number;
 };
@@ -209,11 +158,9 @@ export type ClientPageConfigPageResponseDto = {
 /**
  *  类型定义 [ClientPageConfigResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type ClientPageConfigResponseDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 页面权限级别 */
   accessLevel: 0 | 1 | 2 | 3;
   /* 创建时间 */
@@ -234,7 +181,6 @@ export type ClientPageConfigResponseDto = {
   pageTitle?: string;
   /* 更新时间 */
   updatedAt: string;
-
   /* 访问次数统计 */
   viewCount: number;
 };
@@ -242,11 +188,9 @@ export type ClientPageConfigResponseDto = {
 /**
  *  类型定义 [UpdateClientPageConfigDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type UpdateClientPageConfigDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 页面权限级别 */
   accessLevel?: 0 | 1 | 2 | 3;
   /* 页面描述信息 */
@@ -261,7 +205,6 @@ export type UpdateClientPageConfigDto = {
   pagePath?: string;
   /* 页面状态 */
   pageStatus?: 0 | 1 | 2 | 3;
-
   /* 页面标题（用于SEO） */
   pageTitle?: string;
 };
@@ -269,12 +212,9 @@ export type UpdateClientPageConfigDto = {
 /**
  *  类型定义 [IdsDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type IdsDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 主键id */
   ids: number[];
 };
@@ -282,12 +222,9 @@ export type IdsDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type CountDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 操作成功的数据数量 */
   count: number;
 };

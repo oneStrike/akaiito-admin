@@ -331,10 +331,11 @@ export class OpenAPIGenerator {
   private generatePropertiesFromSchema(schema: any): string[] {
     const properties: string[] = [];
 
-    // 处理 $ref 引用
+    // 处理 $ref 引用 - 这种情况应该在上层处理，这里不应该出现
     if (schema.$ref) {
-      // 如果是引用类型，直接返回引用的类型名
-      return [`  /* 引用类型 */\n  data: ${resolveRef(schema.$ref)}`];
+      // 如果是引用类型，应该在调用方直接使用引用类型
+      console.warn('引用类型应该在上层处理，不应该在这里出现');
+      return [];
     }
 
     // 处理 allOf, oneOf, anyOf
@@ -411,6 +412,21 @@ export class OpenAPIGenerator {
     // 处理请求体
     if (operation.requestBody?.content?.['application/json']?.schema) {
       const schema = operation.requestBody.content['application/json'].schema;
+
+      // 如果是引用类型，直接使用引用类型，不嵌套在 data 中
+      if (schema.$ref) {
+        const refType = resolveRef(schema.$ref);
+        const updateTime = formatCurrentTime(this.config.dateTimeOptions);
+        const comment = TEMPLATES.typeComment(
+          typeName,
+          operation.tags?.[0] || '',
+          updateTime,
+        );
+        return `${comment}
+export type ${typeName} = ${refType}`;
+      }
+
+      // 对于非引用类型，展开属性
       const bodyProps = this.generatePropertiesFromSchema(schema);
       properties.push(...bodyProps);
     }
@@ -418,19 +434,16 @@ export class OpenAPIGenerator {
     if (properties.length === 0) return null;
 
     const updateTime = formatCurrentTime(this.config.dateTimeOptions);
-    const comment = TEMPLATES.interfaceComment(
-      operation.summary || '',
+    const comment = TEMPLATES.typeComment(
+      typeName,
       operation.tags?.[0] || '',
-      operation.method?.toUpperCase() || '',
-      operation.path || '',
       updateTime,
     );
 
+    // 使用 type 而不是 interface，不添加索引签名
     return `${comment}
-export interface ${typeName} {
+export type ${typeName} = {
 ${properties.join('\n\n')}
-
-${TEMPLATES.indexSignature}
 }`;
   }
 
@@ -451,7 +464,7 @@ ${TEMPLATES.indexSignature}
     // 检查是否是基础类型数组
     if (dataSchema.type === 'array') {
       const itemType = mapSchemaToType(dataSchema.items);
-      // 对于基础类型数组，直接返回类型别名，不需要索引签名
+      // 对于基础类型数组，直接返回类型别名
       return `export type ${typeName} = ${itemType}[]`;
     }
 
@@ -474,11 +487,9 @@ ${TEMPLATES.indexSignature}
 
     if (properties.length === 0) return null;
 
-    // 只有对象类型才添加索引签名
+    // 对象类型不添加索引签名
     return `export type ${typeName} = {
 ${properties.join('\n\n')}
-
-${TEMPLATES.indexSignature}
 }`;
   }
 
@@ -606,12 +617,10 @@ export type ${typeName} = Record<string, ${valueType}>`;
       updateTime,
     );
 
-    // 只有对象类型才添加索引签名
+    // 对象类型不添加索引签名
     return `${comment}
 export type ${typeName} = {
 ${properties.join('\n')}
-
-${TEMPLATES.indexSignature}
 }`;
   }
 

@@ -1,69 +1,53 @@
 /**
- *  接口 [创建漫画章节]
- *  @标签 漫画章节管理模块/创建漫画章节
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [CreateComicChapterRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface CreateComicChapterRequest {
-  /* 引用类型 */
-  data: CreateComicChapterDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type CreateComicChapterRequest = CreateComicChapterDto;
 
 export type CreateComicChapterResponse = IdDto;
 
 /**
- *  接口 [分页查询漫画章节列表]
- *  @标签 漫画章节管理模块/分页查询漫画章节列表
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ComicChapterPageRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ComicChapterPageRequest {
-  /* 单页大小，最大500，默认15 */
-  pageSize?: number;
-
-  /* 当前页码 */
-  pageIndex?: number;
-
-  /* 排序字段，json格式 */
-  orderBy?: string;
-
-  /* 开始时间 */
-  startDate?: string;
+export type ComicChapterPageRequest = {
+  /* 漫画ID（精确匹配） */
+  comicId: number;
 
   /* 结束时间 */
   endDate?: string;
 
-  /* 章节标题（模糊搜索） */
-  title?: string;
+  /* 是否为试读章节 */
+  isPreview?: boolean;
 
   /* 发布状态（true: 已发布, false: 未发布） */
   isPublished?: boolean;
 
-  /* 关联的漫画版本ID */
-  versionId?: number;
+  /* 排序字段，json格式 */
+  orderBy?: string;
+
+  /* 当前页码 */
+  pageIndex?: number;
+
+  /* 单页大小，最大500，默认15 */
+  pageSize?: number;
 
   /* 查看规则（0: 公开, 1: 登录, 2: 会员, 3: 购买） */
   readRule?: number;
 
-  /* 是否为试读章节 */
-  isPreview?: boolean;
+  /* 开始时间 */
+  startDate?: string;
 
-  /* 漫画ID（精确匹配） */
-  comicId: number;
+  /* 章节标题（模糊搜索） */
+  title?: string;
 
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+  /* 关联的漫画版本ID */
+  versionId?: number;
+};
 
 export type ComicChapterPageResponse = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 列表数据 */
   list?: ComicChapterPageResponseDto[];
 
@@ -78,217 +62,126 @@ export type ComicChapterPageResponse = {
 };
 
 /**
- *  接口 [获取漫画章节详情]
- *  @标签 漫画章节管理模块/获取漫画章节详情
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ComicChapterDetailRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ComicChapterDetailRequest {
+export type ComicChapterDetailRequest = {
   /* 主键id */
   id: number;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+};
 
 export type ComicChapterDetailResponse = ComicChapterDetailDto;
 
 /**
- *  接口 [更新漫画章节信息]
- *  @标签 漫画章节管理模块/更新漫画章节信息
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [UpdateComicChapterRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface UpdateComicChapterRequest {
-  /* 引用类型 */
-  data: UpdateComicChapterDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type UpdateComicChapterRequest = UpdateComicChapterDto;
 
 export type UpdateComicChapterResponse = IdDto;
 
 /**
- *  接口 [批量更新章节发布状态]
- *  @标签 漫画章节管理模块/批量更新章节发布状态
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [BatchUpdateChapterPublishStatusRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface BatchUpdateChapterPublishStatusRequest {
-  /* 引用类型 */
-  data: UpdateChapterPublishStatusDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type BatchUpdateChapterPublishStatusRequest =
+  UpdateChapterPublishStatusDto;
 
 export type BatchUpdateChapterPublishStatusResponse = CountDto;
 
 /**
- *  接口 [批量软删除章节]
- *  @标签 漫画章节管理模块/批量软删除章节
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [BatchDeleteComicChapterRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface BatchDeleteComicChapterRequest {
-  /* 引用类型 */
-  data: IdsDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type BatchDeleteComicChapterRequest = IdsDto;
 
 export type BatchDeleteComicChapterResponse = CountDto;
 
 /**
- *  接口 [交换两个章节的章节号]
- *  @标签 漫画章节管理模块/交换两个章节的章节号
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [SwapChapterNumbersRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface SwapChapterNumbersRequest {
-  /* 引用类型 */
-  data: OrderDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type SwapChapterNumbersRequest = OrderDto;
 
 export type SwapChapterNumbersResponse = OrderDto;
 
 /**
- *  接口 [获取章节内容详情]
- *  @标签 漫画章节管理模块/获取章节内容详情
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ChapterContentsRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ChapterContentsRequest {
+export type ChapterContentsRequest = {
   /* 主键id */
   id: number;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+};
 
 export type ChapterContentsResponse = string[];
 
 /**
- *  接口 [添加章节内容]
- *  @标签 漫画章节管理模块/添加章节内容
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [AddChapterContentRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface AddChapterContentRequest {
-  /* 引用类型 */
-  data: AddChapterContentDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type AddChapterContentRequest = AddChapterContentDto;
 
 export type AddChapterContentResponse = string[];
 
 /**
- *  接口 [更新章节内容]
- *  @标签 漫画章节管理模块/更新章节内容
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [UpdateChapterContentRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface UpdateChapterContentRequest {
-  /* 引用类型 */
-  data: UpdateChapterContentDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type UpdateChapterContentRequest = UpdateChapterContentDto;
 
 export type UpdateChapterContentResponse = string[];
 
 /**
- *  接口 [删除章节内容]
- *  @标签 漫画章节管理模块/删除章节内容
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [DeleteChapterContentRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface DeleteChapterContentRequest {
-  /* 引用类型 */
-  data: DeleteChapterContentDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type DeleteChapterContentRequest = DeleteChapterContentDto;
 
 export type DeleteChapterContentResponse = string[];
 
 /**
- *  接口 [移动章节内容（排序）]
- *  @标签 漫画章节管理模块/移动章节内容（排序）
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [MoveChapterContentRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface MoveChapterContentRequest {
-  /* 引用类型 */
-  data: MoveChapterContentDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type MoveChapterContentRequest = MoveChapterContentDto;
 
 export type MoveChapterContentResponse = string[];
 
 /**
- *  接口 [批量更新章节内容]
- *  @标签 漫画章节管理模块/批量更新章节内容
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [BatchUpdateChapterContentsRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface BatchUpdateChapterContentsRequest {
-  /* 引用类型 */
-  data: BatchUpdateChapterContentsDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type BatchUpdateChapterContentsRequest = BatchUpdateChapterContentsDto;
 
 export type BatchUpdateChapterContentsResponse = string[];
 
 /**
- *  接口 [清空章节内容]
- *  @标签 漫画章节管理模块/清空章节内容
- *  @方式
- *  @地址
- *  @更新时间 2025-07-29 19:01:20
+ *  类型定义 [ClearChapterContentsRequest]
+ *  @来源 漫画章节管理模块
+ *  @更新时间 2025-07-29 19:32:23
  */
-export interface ClearChapterContentsRequest {
-  /* 引用类型 */
-  data: IdDto;
-
-  /** 任意合法数值 */
-  [property: string]: any;
-}
+export type ClearChapterContentsRequest = IdDto;
 
 export type ClearChapterContentsResponse = IdDto;
 
 /**
  *  类型定义 [CreateComicChapterDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type CreateComicChapterDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 章节序号（用于排序） */
   chapterNumber: number;
   /* 关联的漫画ID */
@@ -309,7 +202,6 @@ export type CreateComicChapterDto = {
   thumbnail?: string;
   /* 章节标题 */
   title: string;
-
   /* 关联的漫画版本ID */
   versionId?: number;
 };
@@ -317,12 +209,9 @@ export type CreateComicChapterDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type IdDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 主键id */
   id: number;
 };
@@ -330,11 +219,9 @@ export type IdDto = {
 /**
  *  类型定义 [ComicChapterPageResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type ComicChapterPageResponseDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 章节序号（用于排序） */
   chapterNumber: number;
   /* 关联的漫画ID */
@@ -367,7 +254,6 @@ export type ComicChapterPageResponseDto = {
   updatedAt: string;
   /* 关联的漫画版本ID */
   versionId?: number;
-
   /* 阅读次数 */
   viewCount: number;
 };
@@ -375,11 +261,9 @@ export type ComicChapterPageResponseDto = {
 /**
  *  类型定义 [ComicChapterDetailDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type ComicChapterDetailDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 章节序号（用于排序） */
   chapterNumber: number;
   /* 关联的漫画ID */
@@ -420,7 +304,6 @@ export type ComicChapterDetailDto = {
   updatedAt: string;
   /* 关联的漫画版本ID */
   versionId?: number;
-
   /* 阅读次数 */
   viewCount: number;
 };
@@ -428,11 +311,9 @@ export type ComicChapterDetailDto = {
 /**
  *  类型定义 [UpdateComicChapterDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type UpdateComicChapterDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 章节序号（用于排序） */
   chapterNumber?: number;
   /* 关联的漫画ID */
@@ -459,7 +340,6 @@ export type UpdateComicChapterDto = {
   thumbnail?: string;
   /* 章节标题 */
   title?: string;
-
   /* 关联的漫画版本ID */
   versionId?: number;
 };
@@ -467,14 +347,11 @@ export type UpdateComicChapterDto = {
 /**
  *  类型定义 [UpdateChapterPublishStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type UpdateChapterPublishStatusDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 章节ID列表 */
   ids: number[];
-
   /* 发布状态（true: 发布, false: 取消发布） */
   isPublished: boolean;
 };
@@ -482,12 +359,9 @@ export type UpdateChapterPublishStatusDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type CountDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 操作成功的数据数量 */
   count: number;
 };
@@ -495,12 +369,9 @@ export type CountDto = {
 /**
  *  类型定义 [IdsDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type IdsDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
-
   /* 主键id */
   ids: number[];
 };
@@ -508,14 +379,11 @@ export type IdsDto = {
 /**
  *  类型定义 [OrderDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type OrderDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 当前拖拽数据的id */
   dragId: number;
-
   /* 拖拽的目标id */
   targetId: number;
 };
@@ -523,16 +391,13 @@ export type OrderDto = {
 /**
  *  类型定义 [AddChapterContentDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type AddChapterContentDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 要添加的内容（图片URL） */
   content: string;
   /* 主键id */
   id: number;
-
   /* 插入位置索引（可选，默认添加到末尾） */
   index?: number;
 };
@@ -540,16 +405,13 @@ export type AddChapterContentDto = {
 /**
  *  类型定义 [UpdateChapterContentDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type UpdateChapterContentDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 要添加的内容（图片URL） */
   content: string;
   /* 主键id */
   id: number;
-
   /* 插入位置索引（可选，默认添加到末尾） */
   index: number;
 };
@@ -557,14 +419,11 @@ export type UpdateChapterContentDto = {
 /**
  *  类型定义 [DeleteChapterContentDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type DeleteChapterContentDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 主键id */
   id: number;
-
   /* 插入位置索引（可选，默认添加到末尾） */
   index: number;
 };
@@ -572,16 +431,13 @@ export type DeleteChapterContentDto = {
 /**
  *  类型定义 [MoveChapterContentDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type MoveChapterContentDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 源索引位置 */
   fromIndex: number;
   /* 主键id */
   id: number;
-
   /* 目标索引位置 */
   toIndex: number;
 };
@@ -589,14 +445,11 @@ export type MoveChapterContentDto = {
 /**
  *  类型定义 [BatchUpdateChapterContentsDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:01:20
+ *  @更新时间 2025-07-29 19:32:23
  */
 export type BatchUpdateChapterContentsDto = {
-  /** 任意合法数值 */
-  [property: string]: any;
   /* 新的内容数组（JSON格式） */
   contents: string[];
-
   /* 主键id */
   id: number;
 };
