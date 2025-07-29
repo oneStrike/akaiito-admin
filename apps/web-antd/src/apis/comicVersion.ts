@@ -17,7 +17,7 @@ import type {
   UpdateComicVersionResponse,
 } from './types/comicVersion.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建漫画版本

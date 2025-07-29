@@ -13,7 +13,7 @@ import type {
   UpdateClientPageResponse,
 } from './types/clientPage.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建页面配置

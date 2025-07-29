@@ -4,7 +4,7 @@ import type {
   SearchResponse,
 } from './types/thirdParty.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 获取第三方漫画平台列表

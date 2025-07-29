@@ -3,7 +3,7 @@
  *  @标签 漫画管理模块/分页查询漫画列表
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface ComicPageRequest {
   /* 单页大小，最大500，默认15 */
@@ -83,7 +83,7 @@ export type ComicPageResponse = {
  *  @标签 漫画管理模块/创建漫画
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface CreateComicRequest {
   /* 引用类型 */
@@ -100,7 +100,7 @@ export type CreateComicResponse = IdDto;
  *  @标签 漫画管理模块/获取漫画详情
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface ComicDetailRequest {
   /* 主键id */
@@ -117,7 +117,7 @@ export type ComicDetailResponse = BaseComicDto;
  *  @标签 漫画管理模块/更新漫画信息
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UpdateComicRequest {
   /* 引用类型 */
@@ -134,7 +134,7 @@ export type UpdateComicResponse = IdDto;
  *  @标签 漫画管理模块/批量更新漫画发布状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateComicStatusRequest {
   /* 引用类型 */
@@ -151,7 +151,7 @@ export type BatchUpdateComicStatusResponse = CountDto;
  *  @标签 漫画管理模块/批量更新漫画推荐状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateComicRecommendedRequest {
   /* 引用类型 */
@@ -168,7 +168,7 @@ export type BatchUpdateComicRecommendedResponse = CountDto;
  *  @标签 漫画管理模块/批量更新漫画热门状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateComicHotRequest {
   /* 引用类型 */
@@ -185,7 +185,7 @@ export type BatchUpdateComicHotResponse = CountDto;
  *  @标签 漫画管理模块/批量更新漫画新作状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateComicNewRequest {
   /* 引用类型 */
@@ -202,7 +202,7 @@ export type BatchUpdateComicNewResponse = CountDto;
  *  @标签 漫画管理模块/软删除漫画
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DeleteComicRequest {
   /* 引用类型 */
@@ -217,7 +217,7 @@ export type DeleteComicResponse = IdDto;
 /**
  *  类型定义 [BaseComicDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type BaseComicDto = {
   /** 任意合法数值 */
@@ -285,7 +285,7 @@ export type BaseComicDto = {
   /* 评分人数 */
   ratingCount: number;
   /* 阅读规则 */
-  readRule: number;
+  readRule: 0 | 1 | 2 | 3;
   /* 推荐权重（影响推荐排序） */
   recommendWeight?: number;
   /* 地区代码 */
@@ -299,7 +299,7 @@ export type BaseComicDto = {
   /* SEO标题 */
   seoTitle?: string;
   /* 连载状态 */
-  serialStatus: number;
+  serialStatus: 0 | 1 | 2 | 3;
   /* 总章节数 */
   totalChapters: number;
   /* 总阅读次数 */
@@ -312,7 +312,7 @@ export type BaseComicDto = {
 /**
  *  类型定义 [CreateComicDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CreateComicDto = {
   /** 任意合法数值 */
@@ -356,7 +356,7 @@ export type CreateComicDto = {
   /* 评分（1-10分，保留1位小数） */
   rating?: number;
   /* 阅读规则 */
-  readRule: number;
+  readRule: 0 | 1 | 2 | 3;
   /* 推荐权重（影响推荐排序） */
   recommendWeight?: number;
   /* 地区代码 */
@@ -371,13 +371,13 @@ export type CreateComicDto = {
   seoTitle?: string;
 
   /* 连载状态 */
-  serialStatus: number;
+  serialStatus: 0 | 1 | 2 | 3;
 };
 
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type IdDto = {
   /** 任意合法数值 */
@@ -390,7 +390,7 @@ export type IdDto = {
 /**
  *  类型定义 [UpdateComicDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicDto = {
   /** 任意合法数值 */
@@ -446,7 +446,7 @@ export type UpdateComicDto = {
   /* 评分（1-10分，保留1位小数） */
   rating?: number;
   /* 阅读规则 */
-  readRule?: number;
+  readRule?: 0 | 1 | 2 | 3;
   /* 推荐权重（影响推荐排序） */
   recommendWeight?: number;
   /* 地区代码 */
@@ -460,7 +460,7 @@ export type UpdateComicDto = {
   /* SEO标题 */
   seoTitle?: string;
   /* 连载状态 */
-  serialStatus?: number;
+  serialStatus?: 0 | 1 | 2 | 3;
 
   /* 总章节数 */
   totalChapters?: number;
@@ -469,7 +469,7 @@ export type UpdateComicDto = {
 /**
  *  类型定义 [UpdateComicStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicStatusDto = {
   /** 任意合法数值 */
@@ -484,7 +484,7 @@ export type UpdateComicStatusDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CountDto = {
   /** 任意合法数值 */
@@ -497,7 +497,7 @@ export type CountDto = {
 /**
  *  类型定义 [UpdateComicRecommendedDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicRecommendedDto = {
   /** 任意合法数值 */
@@ -512,7 +512,7 @@ export type UpdateComicRecommendedDto = {
 /**
  *  类型定义 [UpdateComicHotDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicHotDto = {
   /** 任意合法数值 */
@@ -527,7 +527,7 @@ export type UpdateComicHotDto = {
 /**
  *  类型定义 [UpdateComicNewDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicNewDto = {
   /** 任意合法数值 */

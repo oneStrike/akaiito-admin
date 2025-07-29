@@ -1,6 +1,6 @@
 import type { PublicKeyResponse } from './types/auth.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 获取Admin专用RSA公钥

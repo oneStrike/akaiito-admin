@@ -23,7 +23,7 @@ import type {
   UpdateDictionaryResponse,
 } from './types/dictionary.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 分页查询字典

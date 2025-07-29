@@ -46,13 +46,13 @@ export interface OpenAPIGeneratorConfig {
  * 默认配置
  */
 export const defaultConfig: OpenAPIGeneratorConfig = {
-  baseUrl: 'http://127.0.0.1:4523/export/openapi/3?version=3.0',
-  openApiUrl: 'http://127.0.0.1:4523/export/openapi/3?version=3.0',
+  baseUrl: 'http://127.0.0.1:4523/export/openapi/2?version=3.0',
+  openApiUrl: 'http://127.0.0.1:4523/export/openapi/2?version=3.0',
   outputDir: './src/apis',
   typesOutputDir: './src/apis/types',
   typesDirName: 'types',
   httpHandler: 'requestClient',
-  httpHandlerImport: '#/api/request',
+  httpHandlerImport: '#/utils/request',
   naming: {
     methodNameSegments: 1,
     methodNameSuffix: 'Api',
@@ -76,12 +76,32 @@ export const defaultConfig: OpenAPIGeneratorConfig = {
  * 类型映射配置
  */
 export const TYPE_MAPPING = {
+  // 基础类型
   array: 'any[]',
   boolean: 'boolean',
   integer: 'number',
   number: 'number',
   object: 'Record<string, any>',
   string: 'string',
+  null: 'null',
+
+  // 字符串格式类型
+  'string:date': 'string',
+  'string:date-time': 'string',
+  'string:email': 'string',
+  'string:uri': 'string',
+  'string:uuid': 'string',
+  'string:binary': 'File | Blob',
+  'string:byte': 'string',
+  'string:password': 'string',
+
+  // 数字格式类型
+  'number:float': 'number',
+  'number:double': 'number',
+  'integer:int32': 'number',
+  'integer:int64': 'number',
+
+  // 默认类型
   default: 'any',
 } as const;
 

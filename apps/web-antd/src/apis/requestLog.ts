@@ -5,7 +5,7 @@ import type {
   RequestLogPageResponse,
 } from './types/requestLog.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 分页查询请求日志

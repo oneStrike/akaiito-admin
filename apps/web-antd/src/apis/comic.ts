@@ -19,7 +19,7 @@ import type {
   UpdateComicResponse,
 } from './types/comic.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 分页查询漫画列表

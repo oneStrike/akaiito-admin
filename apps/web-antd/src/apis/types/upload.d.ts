@@ -3,7 +3,7 @@
  *  @标签 管理端文件上传/上传文件
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UploadFileRequest {
   /* 上传场景 */
@@ -18,7 +18,7 @@ export type UploadFileResponse = UploadResponseDto[];
 /**
  *  类型定义 [UploadResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UploadResponseDto = {
   /** 任意合法数值 */

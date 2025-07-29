@@ -14,7 +14,7 @@ import type {
   UpdateCategoryResponse,
 } from './types/category.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建分类

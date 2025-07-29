@@ -3,7 +3,7 @@
  *  @标签 漫画版本管理模块/创建漫画版本
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface CreateComicVersionRequest {
   /* 引用类型 */
@@ -20,7 +20,7 @@ export type CreateComicVersionResponse = IdDto;
  *  @标签 漫画版本管理模块/分页查询漫画版本列表
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface ComicVersionPageRequest {
   /* 单页大小，最大500，默认15 */
@@ -85,7 +85,7 @@ export type ComicVersionPageResponse = {
  *  @标签 漫画版本管理模块/获取漫画版本详情
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface ComicVersionDetailRequest {
   /* 主键id */
@@ -102,7 +102,7 @@ export type ComicVersionDetailResponse = ComicVersionDetailResponseDto;
  *  @标签 漫画版本管理模块/更新漫画版本信息
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UpdateComicVersionRequest {
   /* 引用类型 */
@@ -119,7 +119,7 @@ export type UpdateComicVersionResponse = IdDto;
  *  @标签 漫画版本管理模块/批量更新版本发布状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateVersionPublishStatusRequest {
   /* 引用类型 */
@@ -136,7 +136,7 @@ export type BatchUpdateVersionPublishStatusResponse = CountDto;
  *  @标签 漫画版本管理模块/批量更新版本推荐状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateVersionRecommendedStatusRequest {
   /* 引用类型 */
@@ -153,7 +153,7 @@ export type BatchUpdateVersionRecommendedStatusResponse = CountDto;
  *  @标签 漫画版本管理模块/批量更新版本启用状态
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateVersionEnabledStatusRequest {
   /* 引用类型 */
@@ -170,7 +170,7 @@ export type BatchUpdateVersionEnabledStatusResponse = CountDto;
  *  @标签 漫画版本管理模块/软删除版本
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DeleteComicVersionRequest {
   /* 引用类型 */
@@ -185,7 +185,7 @@ export type DeleteComicVersionResponse = IdDto;
 /**
  *  类型定义 [CreateComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CreateComicVersionDto = {
   /** 任意合法数值 */
@@ -209,7 +209,7 @@ export type CreateComicVersionDto = {
   /* 购买需要消耗的积分 */
   purchaseAmount: number;
   /* 查看规则（0=所有人, 1=登录用户, 2=会员, 3=积分购买） */
-  readRule: number;
+  readRule: 0 | 1 | 2 | 3;
   /* 备注（内部使用） */
   remark?: string;
   /* 翻译组/汉化组名称 */
@@ -222,7 +222,7 @@ export type CreateComicVersionDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type IdDto = {
   /** 任意合法数值 */
@@ -235,7 +235,7 @@ export type IdDto = {
 /**
  *  类型定义 [BaseComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type BaseComicVersionDto = {
   /** 任意合法数值 */
@@ -273,7 +273,7 @@ export type BaseComicVersionDto = {
   /* 评分人数 */
   ratingCount: number;
   /* 查看规则（0=所有人, 1=登录用户, 2=会员, 3=积分购买） */
-  readRule: number;
+  readRule: 0 | 1 | 2 | 3;
   /* 备注（内部使用） */
   remark?: string;
   /* 排序权重（用于版本列表排序） */
@@ -292,7 +292,7 @@ export type BaseComicVersionDto = {
 /**
  *  类型定义 [ComicVersionDetailResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type ComicVersionDetailResponseDto = {
   /** 任意合法数值 */
@@ -330,7 +330,7 @@ export type ComicVersionDetailResponseDto = {
   /* 评分人数 */
   ratingCount: number;
   /* 查看规则（0=所有人, 1=登录用户, 2=会员, 3=积分购买） */
-  readRule: number;
+  readRule: 0 | 1 | 2 | 3;
   /* 备注（内部使用） */
   remark?: string;
   /* 排序权重（用于版本列表排序） */
@@ -349,7 +349,7 @@ export type ComicVersionDetailResponseDto = {
 /**
  *  类型定义 [UpdateComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateComicVersionDto = {
   /** 任意合法数值 */
@@ -375,7 +375,7 @@ export type UpdateComicVersionDto = {
   /* 购买需要消耗的积分 */
   purchaseAmount?: number;
   /* 查看规则（0=所有人, 1=登录用户, 2=会员, 3=积分购买） */
-  readRule?: number;
+  readRule?: 0 | 1 | 2 | 3;
   /* 备注（内部使用） */
   remark?: string;
   /* 排序权重（用于版本列表排序） */
@@ -390,7 +390,7 @@ export type UpdateComicVersionDto = {
 /**
  *  类型定义 [BatchPublishDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type BatchPublishDto = {
   /** 任意合法数值 */
@@ -405,7 +405,7 @@ export type BatchPublishDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CountDto = {
   /** 任意合法数值 */
@@ -418,7 +418,7 @@ export type CountDto = {
 /**
  *  类型定义 [UpdateVersionRecommendedStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateVersionRecommendedStatusDto = {
   /** 任意合法数值 */
@@ -435,7 +435,7 @@ export type UpdateVersionRecommendedStatusDto = {
 /**
  *  类型定义 [UpdateVersionEnabledStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateVersionEnabledStatusDto = {
   /** 任意合法数值 */

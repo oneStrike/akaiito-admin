@@ -20,7 +20,16 @@ export function toPascalCase(str: string): string {
 /**
  * 映射 OpenAPI 类型到 TypeScript 类型
  */
-export function mapOpenAPIType(type: string): string {
+export function mapOpenAPIType(type: string, format?: string): string {
+  // 如果有格式，尝试使用格式化的类型映射
+  if (format) {
+    const formatKey = `${type}:${format}` as keyof typeof TYPE_MAPPING;
+    if (TYPE_MAPPING[formatKey]) {
+      return TYPE_MAPPING[formatKey];
+    }
+  }
+
+  // 使用基础类型映射
   return (
     TYPE_MAPPING[type as keyof typeof TYPE_MAPPING] || TYPE_MAPPING.default
   );
@@ -29,7 +38,7 @@ export function mapOpenAPIType(type: string): string {
 /**
  * 映射 schema 到 TypeScript 类型
  */
-export function mapSchemaToType(schema: any): string {
+export function mapSchemaToType(schema: any, depth: number = 0): string {
   if (!schema) return 'any';
 
   // 处理 $ref 引用
@@ -37,28 +46,116 @@ export function mapSchemaToType(schema: any): string {
     return resolveRef(schema.$ref) as string;
   }
 
+  // 处理 allOf, oneOf, anyOf
+  if (schema.allOf) {
+    const types = schema.allOf.map((s: any) => mapSchemaToType(s, depth + 1));
+    return types.join(' & ');
+  }
+
+  if (schema.oneOf || schema.anyOf) {
+    const schemas = schema.oneOf || schema.anyOf;
+    const types = schemas.map((s: any) => mapSchemaToType(s, depth + 1));
+    return types.join(' | ');
+  }
+
   switch (schema.type) {
     case 'array': {
-      return `${mapSchemaToType(schema.items)}[]`;
+      if (!schema.items) return 'any[]';
+      const itemType = mapSchemaToType(schema.items, depth + 1);
+      return `${itemType}[]`;
     }
     case 'boolean': {
       return 'boolean';
     }
     case 'integer':
     case 'number': {
+      // 处理枚举值
+      if (schema.enum && Array.isArray(schema.enum)) {
+        return schema.enum.join(' | ');
+      }
       return 'number';
     }
     case 'object': {
       if (schema.properties) {
-        // 这里需要递归处理，但为了简化，返回通用对象类型
+        // 避免过深的嵌套，超过3层使用通用类型
+        if (depth > 3) {
+          return 'Record<string, any>';
+        }
+
+        // 生成内联对象类型
+        const props = Object.entries(schema.properties).map(
+          ([key, prop]: [string, any]) => {
+            const required = schema.required?.includes(key) ? '' : '?';
+            const propType = mapSchemaToType(prop, depth + 1);
+            return `  ${key}${required}: ${propType}`;
+          },
+        );
+
+        if (props.length === 0) {
+          return 'Record<string, any>';
+        }
+
+        return `{\n${props.join(';\n')};\n}`;
+      }
+
+      // 处理 additionalProperties
+      if (schema.additionalProperties) {
+        if (typeof schema.additionalProperties === 'object') {
+          const valueType = mapSchemaToType(
+            schema.additionalProperties,
+            depth + 1,
+          );
+          return `Record<string, ${valueType}>`;
+        }
         return 'Record<string, any>';
       }
+
       return 'Record<string, any>';
     }
     case 'string': {
-      return 'string';
+      // 处理字符串枚举
+      if (schema.enum && Array.isArray(schema.enum)) {
+        return schema.enum.map((val: any) => `'${val}'`).join(' | ');
+      }
+
+      // 处理格式化字符串
+      switch (schema.format) {
+        case 'binary': {
+          return 'File | Blob';
+        }
+        case 'date':
+        case 'date-time': {
+          return 'string';
+        } // 可以考虑使用 Date 类型
+        case 'email':
+        case 'uri':
+        case 'uuid': {
+          return 'string';
+        }
+        default: {
+          return 'string';
+        }
+      }
+    }
+    case 'null': {
+      return 'null';
     }
     default: {
+      // 处理没有明确类型但有属性的情况
+      if (schema.properties) {
+        return mapSchemaToType({ ...schema, type: 'object' }, depth);
+      }
+
+      // 处理枚举但没有类型的情况
+      if (schema.enum && Array.isArray(schema.enum)) {
+        const firstType = typeof schema.enum[0];
+        if (firstType === 'string') {
+          return schema.enum.map((val: string) => `'${val}'`).join(' | ');
+        } else if (firstType === 'number') {
+          return schema.enum.join(' | ');
+        }
+      }
+
       return 'any';
     }
   }
@@ -93,9 +190,56 @@ export function collectReferencedTypes(
   if (schema.$ref) {
     const typeName = resolveRef(schema.$ref);
     referencedTypes.add(typeName as string);
-  } else if (schema.type === 'array' && schema.items) {
+    return;
+  }
+
+  // 处理 allOf, oneOf, anyOf
+  if (schema.allOf) {
+    for (const subSchema of schema.allOf) {
+      collectReferencedTypes(subSchema, referencedTypes);
+    }
+    return;
+  }
+
+  if (schema.oneOf) {
+    for (const subSchema of schema.oneOf) {
+      collectReferencedTypes(subSchema, referencedTypes);
+    }
+    return;
+  }
+
+  if (schema.anyOf) {
+    for (const subSchema of schema.anyOf) {
+      collectReferencedTypes(subSchema, referencedTypes);
+    }
+    return;
+  }
+
+  // 处理数组类型
+  if (schema.type === 'array' && schema.items) {
     collectReferencedTypes(schema.items, referencedTypes);
-  } else if (schema.type === 'object' && schema.properties) {
+    return;
+  }
+
+  // 处理对象类型
+  if (schema.type === 'object' && schema.properties) {
+    for (const prop of Object.values(schema.properties)) {
+      collectReferencedTypes(prop, referencedTypes);
+    }
+    return;
+  }
+
+  // 处理 additionalProperties
+  if (
+    schema.additionalProperties &&
+    typeof schema.additionalProperties === 'object'
+  ) {
+    collectReferencedTypes(schema.additionalProperties, referencedTypes);
+    return;
+  }
+
+  // 处理没有明确类型但有属性的情况
+  if (schema.properties) {
     for (const prop of Object.values(schema.properties)) {
       collectReferencedTypes(prop, referencedTypes);
     }

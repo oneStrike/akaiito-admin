@@ -5,7 +5,7 @@ export type GetCaptchaResponse = CaptchaDto;
  *  @标签 管理端用户模块/管理员登录
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserLoginRequest {
   /* 引用类型 */
@@ -22,7 +22,7 @@ export type UserLoginResponse = LoginResponseDto;
  *  @标签 管理端用户模块/管理员登出
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserLogoutRequest {
   /* 引用类型 */
@@ -39,7 +39,7 @@ export type UserLogoutResponse = boolean;
  *  @标签 管理端用户模块/用户注册
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserRegisterRequest {
   /* 引用类型 */
@@ -56,7 +56,7 @@ export type UserRegisterResponse = IdDto;
  *  @标签 管理端用户模块/刷新访问令牌
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserRefreshTokenRequest {
   /* 引用类型 */
@@ -73,7 +73,7 @@ export type UserRefreshTokenResponse = RefreshTokenResponseDto;
  *  @标签 管理端用户模块/修改密码
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserUpdatePasswordRequest {
   /* 引用类型 */
@@ -90,7 +90,7 @@ export type UserUpdatePasswordResponse = UserDto;
  *  @标签 管理端用户模块/更新用户信息
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserUpdateInfoRequest {
   /* 引用类型 */
@@ -109,7 +109,7 @@ export type UserInfoResponse = UserDto;
  *  @标签 管理端用户模块/根据ID获取用户信息
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserInfoByIdRequest {
   /* 主键id */
@@ -126,7 +126,7 @@ export type UserInfoByIdResponse = UserDto;
  *  @标签 管理端用户模块/获取管理端用户分页列表
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserPageRequest {
   /* 单页大小，最大500，默认15 */
@@ -179,7 +179,7 @@ export type UserPageResponse = {
  *  @标签 管理端用户模块/删除用户
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UserDeleteRequest {
   /* 引用类型 */
@@ -194,7 +194,7 @@ export type UserDeleteResponse = IdDto;
 /**
  *  类型定义 [CaptchaDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CaptchaDto = {
   /** 任意合法数值 */
@@ -209,7 +209,7 @@ export type CaptchaDto = {
 /**
  *  类型定义 [UserLoginDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UserLoginDto = {
   /** 任意合法数值 */
@@ -228,22 +228,22 @@ export type UserLoginDto = {
 /**
  *  类型定义 [LoginResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type LoginResponseDto = {
   /** 任意合法数值 */
   [property: string]: any;
   /* 令牌信息 */
-  tokens: any;
+  tokens: TokenDto;
 
   /* 用户信息 */
-  user: any;
+  user: UserDto;
 };
 
 /**
  *  类型定义 [TokenDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type TokenDto = {
   /** 任意合法数值 */
@@ -258,7 +258,7 @@ export type TokenDto = {
 /**
  *  类型定义 [UserRegisterDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UserRegisterDto = {
   /** 任意合法数值 */
@@ -281,7 +281,7 @@ export type UserRegisterDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type IdDto = {
   /** 任意合法数值 */
@@ -294,7 +294,7 @@ export type IdDto = {
 /**
  *  类型定义 [RefreshTokenDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type RefreshTokenDto = {
   /** 任意合法数值 */
@@ -307,20 +307,20 @@ export type RefreshTokenDto = {
 /**
  *  类型定义 [RefreshTokenResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type RefreshTokenResponseDto = {
   /** 任意合法数值 */
   [property: string]: any;
 
   /* 刷新令牌响应 */
-  tokens: any;
+  tokens: TokenDto;
 };
 
 /**
  *  类型定义 [UpdatePasswordDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdatePasswordDto = {
   /** 任意合法数值 */
@@ -339,7 +339,7 @@ export type UpdatePasswordDto = {
 /**
  *  类型定义 [UserDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UserDto = {
   /** 任意合法数值 */
@@ -374,7 +374,7 @@ export type UserDto = {
 /**
  *  类型定义 [UpdateUserDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateUserDto = {
   /** 任意合法数值 */

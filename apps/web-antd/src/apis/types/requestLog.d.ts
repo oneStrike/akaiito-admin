@@ -3,7 +3,7 @@
  *  @标签 管理端请求日志模块/分页查询请求日志
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface RequestLogPageRequest {
   /* 单页大小，最大500，默认15 */
@@ -62,7 +62,7 @@ export type RequestLogPageResponse = {
  *  @标签 管理端请求日志模块/查询请求日志详情
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface RequestLogDetailRequest {
   id: number;
@@ -76,7 +76,7 @@ export type RequestLogDetailResponse = RequestLogDto;
 /**
  *  类型定义 [RequestLogDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type RequestLogDto = {
   /** 任意合法数值 */

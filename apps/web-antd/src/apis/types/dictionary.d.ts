@@ -3,7 +3,7 @@
  *  @标签 字典管理/分页查询字典
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DictionaryPageRequest {
   /* 单页大小，最大500，默认15 */
@@ -56,7 +56,7 @@ export type DictionaryPageResponse = {
  *  @标签 字典管理/获取字典详情
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DictionaryDetailRequest {
   /* 主键id */
@@ -73,7 +73,7 @@ export type DictionaryDetailResponse = DictionaryDto;
  *  @标签 字典管理/创建字典
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface CreateDictionaryRequest {
   /* 引用类型 */
@@ -90,7 +90,7 @@ export type CreateDictionaryResponse = IdDto;
  *  @标签 字典管理/更新字典
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UpdateDictionaryRequest {
   /* 引用类型 */
@@ -107,7 +107,7 @@ export type UpdateDictionaryResponse = IdDto;
  *  @标签 字典管理/删除字典
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DeleteDictionaryRequest {
   /* 引用类型 */
@@ -124,7 +124,7 @@ export type DeleteDictionaryResponse = IdsDto;
  *  @标签 字典管理/批量启用禁用字典
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface BatchUpdateDictionaryStatusRequest {
   /* 引用类型 */
@@ -141,7 +141,7 @@ export type BatchUpdateDictionaryStatusResponse = CountDto;
  *  @标签 字典管理/获取字典项
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DictionaryItemsRequest {
   /* 字典编码 */
@@ -167,7 +167,7 @@ export type DictionaryItemsResponse = DictionaryItemDto[];
  *  @标签 字典管理/创建字典项
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface CreateDictionaryItemRequest {
   /* 引用类型 */
@@ -184,7 +184,7 @@ export type CreateDictionaryItemResponse = IdDto;
  *  @标签 字典管理/更新字典项
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UpdateDictionaryItemRequest {
   /* 引用类型 */
@@ -201,7 +201,7 @@ export type UpdateDictionaryItemResponse = IdDto;
  *  @标签 字典管理/删除字典项
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface DeleteDictionaryItemRequest {
   /* 引用类型 */
@@ -218,7 +218,7 @@ export type DeleteDictionaryItemResponse = CountDto;
  *  @标签 字典管理/启用禁用字典项
  *  @方式
  *  @地址
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export interface UpdateDictionaryItemStatusRequest {
   /* 引用类型 */
@@ -233,7 +233,7 @@ export type UpdateDictionaryItemStatusResponse = CountDto;
 /**
  *  类型定义 [DictionaryDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type DictionaryDto = {
   /** 任意合法数值 */
@@ -260,7 +260,7 @@ export type DictionaryDto = {
 /**
  *  类型定义 [CreateDictionaryDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CreateDictionaryDto = {
   /** 任意合法数值 */
@@ -281,7 +281,7 @@ export type CreateDictionaryDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type IdDto = {
   /** 任意合法数值 */
@@ -294,7 +294,7 @@ export type IdDto = {
 /**
  *  类型定义 [IdsDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type IdsDto = {
   /** 任意合法数值 */
@@ -307,7 +307,7 @@ export type IdsDto = {
 /**
  *  类型定义 [BatchEnabledDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type BatchEnabledDto = {
   /** 任意合法数值 */
@@ -322,7 +322,7 @@ export type BatchEnabledDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CountDto = {
   /** 任意合法数值 */
@@ -335,7 +335,7 @@ export type CountDto = {
 /**
  *  类型定义 [DictionaryItemDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type DictionaryItemDto = {
   /** 任意合法数值 */
@@ -366,7 +366,7 @@ export type DictionaryItemDto = {
 /**
  *  类型定义 [CreateDictionaryItemDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type CreateDictionaryItemDto = {
   /** 任意合法数值 */
@@ -391,7 +391,7 @@ export type CreateDictionaryItemDto = {
 /**
  *  类型定义 [UpdateDictionaryItemDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 11:57:07
+ *  @更新时间 2025-07-29 19:01:20
  */
 export type UpdateDictionaryItemDto = {
   /** 任意合法数值 */

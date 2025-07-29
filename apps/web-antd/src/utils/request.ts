@@ -15,9 +15,8 @@ import { useAccessStore } from '@vben/stores';
 
 import { message } from 'ant-design-vue';
 
+import { userRefreshTokenApi } from '#/apis/user';
 import { useAuthStore } from '#/store';
-
-import { refreshTokenApi } from './core';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
@@ -50,7 +49,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
    */
   async function doRefreshToken() {
     const accessStore = useAccessStore();
-    const resp = await refreshTokenApi();
+    const resp = await userRefreshTokenApi();
     const newToken = resp.data;
     accessStore.setAccessToken(newToken);
     return newToken;

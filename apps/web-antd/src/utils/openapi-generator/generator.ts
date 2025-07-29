@@ -337,18 +337,47 @@ export class OpenAPIGenerator {
       return [`  /* 引用类型 */\n  data: ${resolveRef(schema.$ref)}`];
     }
 
+    // 处理 allOf, oneOf, anyOf
+    if (schema.allOf) {
+      const types = schema.allOf.map((s: any) => {
+        if (s.$ref) return resolveRef(s.$ref);
+        return mapSchemaToType(s);
+      });
+      return [`  /* 组合类型 */\n  data: ${types.join(' & ')}`];
+    }
+
+    if (schema.oneOf || schema.anyOf) {
+      const schemas = schema.oneOf || schema.anyOf;
+      const types = schemas.map((s: any) => {
+        if (s.$ref) return resolveRef(s.$ref);
+        return mapSchemaToType(s);
+      });
+      return [`  /* 联合类型 */\n  data: ${types.join(' | ')}`];
+    }
+
     if (schema.type === 'object' && schema.properties) {
       for (const [propName, propSchema] of Object.entries(schema.properties)) {
         const prop = propSchema as any;
         const required = schema.required?.includes(propName) ? '' : '?';
-        const type = mapSchemaToType(prop);
+
+        // 使用改进的类型映射
+        const type = prop.$ref
+          ? (resolveRef(prop.$ref) as string)
+          : mapSchemaToType(prop);
+
         const description = prop.description ? `/* ${prop.description} */` : '';
         properties.push(`  ${description}\n  ${propName}${required}: ${type}`);
       }
     } else if (schema.type === 'array') {
       // 处理数组类型
-      const itemType = mapSchemaToType(schema.items);
+      const itemType = schema.items?.$ref
+        ? (resolveRef(schema.items.$ref) as string)
+        : mapSchemaToType(schema.items);
       return [`  /* 数组数据 */\n  items: ${itemType}[]`];
+    } else if (schema.enum) {
+      // 处理枚举类型
+      const enumType = mapSchemaToType(schema);
+      return [`  /* 枚举值 */\n  value: ${enumType}`];
     }
 
     return properties;
@@ -365,7 +394,10 @@ export class OpenAPIGenerator {
       for (const param of operation.parameters) {
         if (param.in === 'query' || param.in === 'path') {
           const required = param.required ? '' : '?';
-          const type = mapOpenAPIType(param.schema?.type || 'string');
+          const type = mapOpenAPIType(
+            param.schema?.type || 'string',
+            param.schema?.format,
+          );
           const description = param.description
             ? `/* ${param.description} */`
             : '';
@@ -459,9 +491,57 @@ ${TEMPLATES.indexSignature}
     const schema = this.spec.components.schemas[typeName];
     const updateTime = formatCurrentTime(this.config.dateTimeOptions);
 
+    // 处理 allOf 组合类型
+    if (schema.allOf) {
+      const types = schema.allOf.map((s: any) => {
+        if (s.$ref) {
+          return resolveRef(s.$ref);
+        }
+        if (s.properties) {
+          const props = this.generatePropertiesFromSchema(s);
+          return `{\n${props.join('\n')}\n}`;
+        }
+        return mapSchemaToType(s);
+      });
+
+      const comment = TEMPLATES.typeComment(
+        typeName,
+        'components.schemas',
+        updateTime,
+      );
+      return `${comment}
+export type ${typeName} = ${types.join(' & ')}`;
+    }
+
+    // 处理 oneOf/anyOf 联合类型
+    if (schema.oneOf || schema.anyOf) {
+      const schemas = schema.oneOf || schema.anyOf;
+      const types = schemas.map((s: any) => {
+        if (s.$ref) {
+          return resolveRef(s.$ref);
+        }
+        if (s.properties) {
+          const props = this.generatePropertiesFromSchema(s);
+          return `{\n${props.join('\n')}\n}`;
+        }
+        return mapSchemaToType(s);
+      });
+
+      const comment = TEMPLATES.typeComment(
+        typeName,
+        'components.schemas',
+        updateTime,
+      );
+      return `${comment}
+export type ${typeName} = ${types.join(' | ')}`;
+    }
+
     // 检查是否是基础类型数组
     if (schema.type === 'array') {
-      const itemType = mapSchemaToType(schema.items);
+      const itemType = schema.items?.$ref
+        ? (resolveRef(schema.items.$ref) as string)
+        : mapSchemaToType(schema.items);
+
       const comment = TEMPLATES.typeComment(
         typeName,
         'components.schemas',
@@ -469,6 +549,18 @@ ${TEMPLATES.indexSignature}
       );
       return `${comment}
 export type ${typeName} = ${itemType}[]`;
+    }
+
+    // 检查是否是枚举类型
+    if (schema.enum) {
+      const enumType = mapSchemaToType(schema);
+      const comment = TEMPLATES.typeComment(
+        typeName,
+        'components.schemas',
+        updateTime,
+      );
+      return `${comment}
+export type ${typeName} = ${enumType}`;
     }
 
     // 检查是否是基础类型
@@ -486,9 +578,27 @@ export type ${typeName} = ${itemType}[]`;
 export type ${typeName} = ${baseType}`;
     }
 
+    // 处理对象类型
     const properties = this.generatePropertiesFromSchema(schema);
 
-    if (properties.length === 0) return null;
+    if (properties.length === 0) {
+      // 如果没有属性但有 additionalProperties，生成 Record 类型
+      if (schema.additionalProperties) {
+        const valueType =
+          typeof schema.additionalProperties === 'object'
+            ? mapSchemaToType(schema.additionalProperties)
+            : 'any';
+
+        const comment = TEMPLATES.typeComment(
+          typeName,
+          'components.schemas',
+          updateTime,
+        );
+        return `${comment}
+export type ${typeName} = Record<string, ${valueType}>`;
+      }
+      return null;
+    }
 
     const comment = TEMPLATES.typeComment(
       typeName,

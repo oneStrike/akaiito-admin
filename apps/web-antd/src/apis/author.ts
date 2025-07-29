@@ -15,7 +15,7 @@ import type {
   UpdateAuthorResponse,
 } from './types/author.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建作者

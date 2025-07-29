@@ -1,6 +1,6 @@
 import type { UploadFileRequest, UploadFileResponse } from './types/upload.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 上传文件

@@ -13,7 +13,7 @@ import type {
   UpdateNoticeResponse,
 } from './types/notice.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建通知消息

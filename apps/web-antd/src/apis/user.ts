@@ -21,7 +21,7 @@ import type {
   UserUpdatePasswordResponse,
 } from './types/user.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 获取验证码

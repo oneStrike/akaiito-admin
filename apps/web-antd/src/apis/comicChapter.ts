@@ -29,7 +29,7 @@ import type {
   UpdateComicChapterResponse,
 } from './types/comicChapter.d';
 
-import { requestClient } from '#/api/request';
+import { requestClient } from '#/utils/request';
 
 /**
  * 创建漫画章节
