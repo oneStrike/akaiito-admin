@@ -1,6 +1,4 @@
-import type { UserInfo } from '@vben/types';
-
-import type { UserLoginRequest } from '#/apis/types/user';
+import type { Recordable, UserInfo } from '@vben/types';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -12,7 +10,7 @@ import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 import { notification } from 'ant-design-vue';
 import { defineStore } from 'pinia';
 
-import { userInfoApi, userLoginApi, userLogoutApi } from '#/apis/user';
+import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
 import { $t } from '#/locales';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -28,30 +26,38 @@ export const useAuthStore = defineStore('auth', () => {
    * @param params 登录表单数据
    */
   async function authLogin(
-    params: UserLoginRequest,
+    params: Recordable<any>,
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
     let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
-      const { tokens } = await userLoginApi(params);
+      const { accessToken } = await loginApi(params);
 
       // 如果成功获取到 accessToken
-      if (tokens) {
-        accessStore.setAccessToken(tokens.accessToken);
+      if (accessToken) {
+        accessStore.setAccessToken(accessToken);
 
         // 获取用户信息并存储到 accessStore 中
-        userInfo = await fetchUserInfo();
-        userInfo.token = tokens.accessToken;
+        const [fetchUserInfoResult, accessCodes] = await Promise.all([
+          fetchUserInfo(),
+          getAccessCodesApi(),
+        ]);
+
+        userInfo = fetchUserInfoResult;
+
         userStore.setUserInfo(userInfo);
+        accessStore.setAccessCodes(accessCodes);
 
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(preferences.app.defaultHomePath);
+            : await router.push(
+                userInfo.homePath || preferences.app.defaultHomePath,
+              );
         }
 
         if (userInfo?.realName) {
@@ -73,7 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout(redirect: boolean = true) {
     try {
-      await userLogoutApi({ accessToken: '', refreshToken: '' });
+      await logoutApi();
     } catch {
       // 不做任何处理
     }
@@ -92,18 +98,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchUserInfo() {
-    const userInfo = await userInfoApi();
-    const vbenUserInfo = {
-      ...userInfo,
-      homePath: '',
-      realName: userInfo.username,
-      desc: '',
-      token: '',
-      userId: String(userInfo.id),
-      avatar: userInfo.avatar || '',
-    };
-    userStore.setUserInfo(vbenUserInfo);
-    return vbenUserInfo;
+    let userInfo: null | UserInfo = null;
+    userInfo = await getUserInfoApi();
+    userStore.setUserInfo(userInfo);
+    return userInfo;
   }
 
   function $reset() {
