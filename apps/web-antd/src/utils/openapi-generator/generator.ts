@@ -1,0 +1,514 @@
+import type { GeneratorConfig } from './config';
+import type {
+  GeneratedFile,
+  GroupedPaths,
+  MethodInfo,
+  ModuleCodeResult,
+  OpenAPISpec,
+  PathOperation,
+} from './types';
+
+import { DEFAULT_CONFIG, TEMPLATES } from './config';
+import {
+  collectReferencedTypes,
+  formatCurrentTime,
+  mapOpenAPIType,
+  mapSchemaToType,
+  resolveRef,
+  toCamelCase,
+  toPascalCase,
+} from './utils';
+
+/**
+ * OpenAPI 代码生成器核心类
+ */
+export class OpenAPIGenerator {
+  private config: GeneratorConfig;
+  private spec: null | OpenAPISpec = null;
+
+  constructor(config: Partial<GeneratorConfig> = {}) {
+    this.config = { ...DEFAULT_CONFIG, ...config };
+  }
+
+  /**
+   * 获取 OpenAPI 文档
+   */
+  async fetchOpenAPISpec(url?: string): Promise<null | OpenAPISpec> {
+    const apiUrl = url || this.config.openApiUrl;
+
+    try {
+      console.log(`正在请求 OpenAPI 文档: ${apiUrl}`);
+      const response = await fetch(apiUrl);
+
+      console.log(`响应状态: ${response.status} ${response.statusText}`);
+      console.log(
+        `响应头 Content-Type: ${response.headers.get('content-type')}`,
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('服务器响应错误内容:', errorText);
+        throw new Error(
+          `Failed to fetch OpenAPI spec: ${response.status} ${response.statusText}`,
+        );
+      }
+
+      // 检查响应的 Content-Type
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.warn(`警告: 响应的 Content-Type 不是 JSON: ${contentType}`);
+      }
+
+      // 先获取响应文本，然后尝试解析
+      const responseText = await response.text();
+      console.log(`响应内容长度: ${responseText.length} 字符`);
+
+      if (!responseText.trim()) {
+        throw new Error('服务器返回了空响应');
+      }
+
+      // 显示响应内容的前100个字符用于调试
+      console.log(
+        `响应内容预览: ${responseText.slice(0, 100)}${responseText.length > 100 ? '...' : ''}`,
+      );
+
+      try {
+        this.spec = JSON.parse(responseText);
+        console.log('✅ OpenAPI 文档解析成功');
+        return this.spec;
+      } catch (parseError) {
+        console.error('❌ JSON 解析失败:', parseError);
+        console.error('响应内容:', responseText);
+        throw new Error(
+          `JSON 解析失败: ${parseError instanceof Error ? parseError.message : String(parseError)}`,
+        );
+      }
+    } catch (error) {
+      console.error('❌ 获取 OpenAPI 文档失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 生成 API 代码
+   */
+  generateAPICode(): GeneratedFile[] {
+    if (!this.spec) {
+      throw new Error('OpenAPI spec not loaded');
+    }
+
+    const files: GeneratedFile[] = [];
+    const groupedPaths = this.groupPathsByModule();
+
+    for (const [moduleName, paths] of Object.entries(groupedPaths)) {
+      const { apiContent, typesContent } = this.generateModuleCode(
+        moduleName,
+        paths,
+      );
+
+      files.push({
+        fileName: `${moduleName}.ts`,
+        content: apiContent,
+        types: typesContent,
+      });
+    }
+
+    return files;
+  }
+
+  /**
+   * 生成模块代码
+   */
+  generateModuleCode(
+    moduleName: string,
+    paths: PathOperation[],
+    finalFileName?: string,
+  ): ModuleCodeResult {
+    const imports = new Set<string>();
+    const apiMethods: string[] = [];
+    const typeDefinitions: string[] = [];
+    const referencedTypes = new Set<string>();
+
+    for (const { path, method, operation } of paths) {
+      const { methodName, requestType, responseType } =
+        this.generateMethodInfo(path);
+
+      // 检查是否需要参数
+      const hasParams = this.hasRequestParams(method, operation);
+
+      // 生成请求类型定义（仅当有参数时）
+      if (hasParams) {
+        const requestTypeDef = this.generateRequestType(requestType, operation);
+        if (requestTypeDef) {
+          typeDefinitions.push(requestTypeDef);
+          imports.add(requestType);
+          // 收集引用的类型
+          collectReferencedTypes(
+            operation.requestBody?.content?.['application/json']?.schema,
+            referencedTypes,
+          );
+          if (operation.parameters) {
+            operation.parameters.forEach((param: any) => {
+              collectReferencedTypes(param.schema, referencedTypes);
+            });
+          }
+        }
+      }
+
+      // 生成响应类型定义
+      if (operation.responses && operation.responses['200']) {
+        const responseTypeDef = this.generateResponseType(
+          responseType,
+          operation.responses['200'],
+        );
+        if (responseTypeDef) {
+          typeDefinitions.push(responseTypeDef);
+          imports.add(responseType);
+          // 收集引用的类型
+          collectReferencedTypes(
+            operation.responses['200'].content?.['application/json']?.schema,
+            referencedTypes,
+          );
+        }
+      }
+
+      // 生成API方法
+      const apiMethod = this.generateAPIMethod(
+        methodName,
+        path,
+        method,
+        operation,
+        hasParams ? requestType : null,
+        responseType,
+      );
+      apiMethods.push(apiMethod);
+    }
+
+    // 生成引用的类型定义
+    for (const typeName of referencedTypes) {
+      const schemaTypeDef = this.generateSchemaType(typeName);
+      if (schemaTypeDef) {
+        typeDefinitions.push(schemaTypeDef);
+        imports.add(typeName);
+      }
+    }
+
+    // 使用最终文件名（去掉.ts扩展名）来生成正确的类型导入路径
+    const typeFileName = finalFileName
+      ? finalFileName.replace('.ts', '')
+      : moduleName;
+
+    // 生成导入语句
+    const importStatements =
+      [...imports].length > 0
+        ? `import type {\n  ${[...imports].join(',\n  ')}\n} from './${this.config.typesDirName}/${typeFileName}.d'\n\n`
+        : '';
+
+    const apiContent = `import { httpHandler } from '${this.config.httpHandlerImport}'\n${importStatements}${apiMethods.join('\n\n')}\n`;
+
+    const typesContent = typeDefinitions.join('\n\n');
+
+    return { apiContent, typesContent };
+  }
+
+  /**
+   * 按模块分组路径
+   */
+  groupPathsByModule(): GroupedPaths {
+    const grouped: GroupedPaths = {};
+
+    if (!this.spec) {
+      return grouped;
+    }
+
+    for (const [path, methods] of Object.entries(this.spec.paths)) {
+      for (const [method, operation] of Object.entries(methods)) {
+        if (typeof operation !== 'object') continue;
+
+        const pathParts = path.split('/').filter(Boolean);
+        if (pathParts.length === 0) continue;
+
+        // 使用倒数第二个路径段作为模块名
+        const secondLast =
+          pathParts[pathParts.length - 2] ||
+          pathParts[pathParts.length - 1] ||
+          'default';
+        const moduleName = toCamelCase(secondLast);
+
+        if (!grouped[moduleName]) {
+          grouped[moduleName] = [];
+        }
+
+        grouped[moduleName].push({
+          path,
+          method: method.toUpperCase(),
+          operation,
+        });
+      }
+    }
+
+    return grouped;
+  }
+
+  /**
+   * 生成 API 方法
+   */
+  private generateAPIMethod(
+    methodName: string,
+    path: string,
+    method: string,
+    operation: any,
+    requestType: null | string,
+    responseType: string,
+  ): string {
+    const hasParams = requestType !== null;
+    const tag = operation.tags?.[0] || '';
+    const summary = operation.summary || '';
+    const updateTime = formatCurrentTime(this.config.dateTimeOptions);
+
+    const comment = TEMPLATES.apiMethodComment(
+      tag,
+      summary,
+      method,
+      path,
+      updateTime,
+    );
+
+    const paramType = hasParams ? `params: ${requestType}` : '';
+    const returnType = `Promise<${responseType}>`;
+
+    let requestConfig = '';
+    requestConfig =
+      method === 'GET'
+        ? `{
+    method: '${method}',
+    url: '${path}',
+    headers: {},${hasParams ? '\n    params,' : ''}
+  }`
+        : `{
+    method: '${method}',
+    url: '${path}',
+    headers: {},${hasParams ? '\n    data: params,' : ''}
+  }`;
+
+    return `${comment}
+export const ${methodName}Api = (${paramType}): ${returnType} => {
+  return httpHandler(${requestConfig})
+}`;
+  }
+
+  /**
+   * 生成方法信息
+   */
+  private generateMethodInfo(path: string): MethodInfo {
+    const pathParts = path.split('/').filter(Boolean);
+    const secondLast = pathParts[pathParts.length - 2] || '';
+    const last = pathParts[pathParts.length - 1] || '';
+
+    // 方法名使用倒数第二个和最后一个路径段合并
+    const methodName = toCamelCase(`${secondLast}-${last}`);
+    const requestType = `${toPascalCase(methodName)}Request`;
+    const responseType = `${toPascalCase(methodName)}Response`;
+
+    return { methodName, requestType, responseType };
+  }
+
+  /**
+   * 从 schema 生成属性
+   */
+  private generatePropertiesFromSchema(schema: any): string[] {
+    const properties: string[] = [];
+
+    // 处理 $ref 引用
+    if (schema.$ref) {
+      // 如果是引用类型，直接返回引用的类型名
+      return [`  /* 引用类型 */\n  data: ${resolveRef(schema.$ref)}`];
+    }
+
+    if (schema.type === 'object' && schema.properties) {
+      for (const [propName, propSchema] of Object.entries(schema.properties)) {
+        const prop = propSchema as any;
+        const required = schema.required?.includes(propName) ? '' : '?';
+        const type = mapSchemaToType(prop);
+        const description = prop.description ? `/* ${prop.description} */` : '';
+        properties.push(`  ${description}\n  ${propName}${required}: ${type}`);
+      }
+    } else if (schema.type === 'array') {
+      // 处理数组类型
+      const itemType = mapSchemaToType(schema.items);
+      return [`  /* 数组数据 */\n  items: ${itemType}[]`];
+    }
+
+    return properties;
+  }
+
+  /**
+   * 生成请求类型
+   */
+  private generateRequestType(typeName: string, operation: any): null | string {
+    const properties: string[] = [];
+
+    // 处理查询参数
+    if (operation.parameters) {
+      for (const param of operation.parameters) {
+        if (param.in === 'query' || param.in === 'path') {
+          const required = param.required ? '' : '?';
+          const type = mapOpenAPIType(param.schema?.type || 'string');
+          const description = param.description
+            ? `/* ${param.description} */`
+            : '';
+          properties.push(
+            `  ${description}\n  ${param.name}${required}: ${type}`,
+          );
+        }
+      }
+    }
+
+    // 处理请求体
+    if (operation.requestBody?.content?.['application/json']?.schema) {
+      const schema = operation.requestBody.content['application/json'].schema;
+      const bodyProps = this.generatePropertiesFromSchema(schema);
+      properties.push(...bodyProps);
+    }
+
+    if (properties.length === 0) return null;
+
+    const updateTime = formatCurrentTime(this.config.dateTimeOptions);
+    const comment = TEMPLATES.interfaceComment(
+      operation.summary || '',
+      operation.tags?.[0] || '',
+      operation.method?.toUpperCase() || '',
+      operation.path || '',
+      updateTime,
+    );
+
+    return `${comment}
+export interface ${typeName} {
+${properties.join('\n\n')}
+
+${TEMPLATES.indexSignature}
+}`;
+  }
+
+  /**
+   * 生成响应类型
+   */
+  private generateResponseType(typeName: string, response: any): null | string {
+    if (!response.content?.['application/json']?.schema) return null;
+
+    const schema = response.content['application/json'].schema;
+
+    // 只解析data字段的数据
+    let dataSchema = schema;
+    if (schema.properties?.data) {
+      dataSchema = schema.properties.data;
+    }
+
+    // 检查是否是基础类型数组
+    if (dataSchema.type === 'array') {
+      const itemType = mapSchemaToType(dataSchema.items);
+      // 对于基础类型数组，直接返回类型别名，不需要索引签名
+      return `export type ${typeName} = ${itemType}[]`;
+    }
+
+    // 检查是否是基础类型
+    if (
+      dataSchema.type &&
+      ['boolean', 'integer', 'number', 'string'].includes(dataSchema.type)
+    ) {
+      const baseType = mapSchemaToType(dataSchema);
+      return `export type ${typeName} = ${baseType}`;
+    }
+
+    // 检查是否是引用类型
+    if (dataSchema.$ref) {
+      const refType = resolveRef(dataSchema.$ref);
+      return `export type ${typeName} = ${refType}`;
+    }
+
+    const properties = this.generatePropertiesFromSchema(dataSchema);
+
+    if (properties.length === 0) return null;
+
+    // 只有对象类型才添加索引签名
+    return `export type ${typeName} = {
+${properties.join('\n\n')}
+
+${TEMPLATES.indexSignature}
+}`;
+  }
+
+  /**
+   * 生成 schema 类型定义
+   */
+  private generateSchemaType(typeName: string): null | string {
+    if (!this.spec?.components?.schemas?.[typeName]) return null;
+
+    const schema = this.spec.components.schemas[typeName];
+    const updateTime = formatCurrentTime(this.config.dateTimeOptions);
+
+    // 检查是否是基础类型数组
+    if (schema.type === 'array') {
+      const itemType = mapSchemaToType(schema.items);
+      const comment = TEMPLATES.typeComment(
+        typeName,
+        'components.schemas',
+        updateTime,
+      );
+      return `${comment}
+export type ${typeName} = ${itemType}[]`;
+    }
+
+    // 检查是否是基础类型
+    if (
+      schema.type &&
+      ['boolean', 'integer', 'number', 'string'].includes(schema.type)
+    ) {
+      const baseType = mapSchemaToType(schema);
+      const comment = TEMPLATES.typeComment(
+        typeName,
+        'components.schemas',
+        updateTime,
+      );
+      return `${comment}
+export type ${typeName} = ${baseType}`;
+    }
+
+    const properties = this.generatePropertiesFromSchema(schema);
+
+    if (properties.length === 0) return null;
+
+    const comment = TEMPLATES.typeComment(
+      typeName,
+      'components.schemas',
+      updateTime,
+    );
+
+    // 只有对象类型才添加索引签名
+    return `${comment}
+export type ${typeName} = {
+${properties.join('\n')}
+
+${TEMPLATES.indexSignature}
+}`;
+  }
+
+  /**
+   * 检查接口是否需要参数
+   */
+  private hasRequestParams(method: string, operation: any): boolean {
+    // 检查是否有请求体
+    if (operation.requestBody?.content?.['application/json']?.schema) {
+      return true;
+    }
+
+    // 检查是否有查询参数或路径参数
+    if (operation.parameters && operation.parameters.length > 0) {
+      return operation.parameters.some(
+        (param: any) => param.in === 'query' || param.in === 'path',
+      );
+    }
+
+    return false;
+  }
+}
