@@ -1,4 +1,4 @@
-import type { GeneratorConfig } from './config';
+import type { OpenAPIGeneratorConfig } from './config';
 import type {
   GeneratedFile,
   GroupedPaths,
@@ -8,7 +8,7 @@ import type {
   PathOperation,
 } from './types';
 
-import { DEFAULT_CONFIG, TEMPLATES } from './config';
+import { defaultConfig, TEMPLATES } from './config';
 import {
   collectReferencedTypes,
   formatCurrentTime,
@@ -23,11 +23,11 @@ import {
  * OpenAPI 代码生成器核心类
  */
 export class OpenAPIGenerator {
-  private config: GeneratorConfig;
+  private config: OpenAPIGeneratorConfig;
   private spec: null | OpenAPISpec = null;
 
-  constructor(config: Partial<GeneratorConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
+  constructor(config: Partial<OpenAPIGeneratorConfig> = {}) {
+    this.config = { ...defaultConfig, ...config };
   }
 
   /**
@@ -130,8 +130,7 @@ export class OpenAPIGenerator {
     const referencedTypes = new Set<string>();
 
     for (const { path, method, operation } of paths) {
-      const { methodName, requestType, responseType } =
-        this.generateMethodInfo(path);
+      const { requestType, responseType } = this.generateMethodInfo(path);
 
       // 检查是否需要参数
       const hasParams = this.hasRequestParams(method, operation);
@@ -173,14 +172,7 @@ export class OpenAPIGenerator {
       }
 
       // 生成API方法
-      const apiMethod = this.generateAPIMethod(
-        methodName,
-        path,
-        method,
-        operation,
-        hasParams ? requestType : null,
-        responseType,
-      );
+      const apiMethod = this.generateAPIMethod(path, method, operation);
       apiMethods.push(apiMethod);
     }
 
@@ -204,7 +196,7 @@ export class OpenAPIGenerator {
         ? `import type {\n  ${[...imports].join(',\n  ')}\n} from './${this.config.typesDirName}/${typeFileName}.d'\n\n`
         : '';
 
-    const apiContent = `import { httpHandler } from '${this.config.httpHandlerImport}'\n${importStatements}${apiMethods.join('\n\n')}\n`;
+    const apiContent = `import { ${this.config.httpHandler} } from '${this.config.httpHandlerImport}'\n${importStatements}${apiMethods.join('\n\n')}\n`;
 
     const typesContent = typeDefinitions.join('\n\n');
 
@@ -254,47 +246,57 @@ export class OpenAPIGenerator {
    * 生成 API 方法
    */
   private generateAPIMethod(
-    methodName: string,
     path: string,
     method: string,
     operation: any,
-    requestType: null | string,
-    responseType: string,
   ): string {
-    const hasParams = requestType !== null;
-    const tag = operation.tags?.[0] || '';
-    const summary = operation.summary || '';
-    const updateTime = formatCurrentTime(this.config.dateTimeOptions);
+    const { methodName, requestType, responseType } =
+      this.generateMethodInfo(path);
+    const finalMethodName = `${methodName}${this.config.naming.methodNameSuffix}`;
 
-    const comment = TEMPLATES.apiMethodComment(
-      tag,
-      summary,
-      method,
-      path,
-      updateTime,
-    );
+    const hasParams = operation.parameters && operation.parameters.length > 0;
+    const hasRequestBody = operation.requestBody;
 
-    const paramType = hasParams ? `params: ${requestType}` : '';
-    const returnType = `Promise<${responseType}>`;
+    // 生成参数类型
+    let paramType = 'void';
+    if (hasParams || hasRequestBody) {
+      paramType = requestType;
+    }
 
-    let requestConfig = '';
-    requestConfig =
-      method === 'GET'
-        ? `{
-    method: '${method}',
-    url: '${path}',
-    headers: {},${hasParams ? '\n    params,' : ''}
-  }`
-        : `{
-    method: '${method}',
-    url: '${path}',
-    headers: {},${hasParams ? '\n    data: params,' : ''}
+    // 根据 HTTP 方法生成不同的调用方式
+    let httpCall = '';
+    const upperMethod = method.toUpperCase();
+
+    if (upperMethod === 'GET' || upperMethod === 'DELETE') {
+      // GET 和 DELETE 请求，参数通过 params 传递
+      httpCall =
+        paramType === 'void'
+          ? `return ${this.config.httpHandler}.${method.toLowerCase()}<${responseType}>('${path}');`
+          : `return ${this.config.httpHandler}.${method.toLowerCase()}<${responseType}>('${path}', { params });`;
+    } else if (upperMethod === 'POST' || upperMethod === 'PUT') {
+      // POST 和 PUT 请求，参数直接传递
+      httpCall =
+        paramType === 'void'
+          ? `return ${this.config.httpHandler}.${method.toLowerCase()}<${responseType}>('${path}');`
+          : `return ${this.config.httpHandler}.${method.toLowerCase()}<${responseType}>('${path}', params);`;
+    } else {
+      // 其他 HTTP 方法使用通用的 request 方法
+      httpCall =
+        paramType === 'void'
+          ? `return ${this.config.httpHandler}.request<${responseType}>({ url: '${path}', method: '${upperMethod}' });`
+          : `return ${this.config.httpHandler}.request<${responseType}>({ url: '${path}', method: '${upperMethod}', data: params });`;
+    }
+
+    // 生成方法签名
+    const paramSignature = paramType === 'void' ? '' : `params: ${paramType}`;
+
+    return `
+  /**
+   * ${operation.summary || operation.description || `${upperMethod} ${path}`}
+   */
+  export async function ${finalMethodName}(${paramSignature}): Promise<${responseType}> {
+    ${httpCall}
   }`;
-
-    return `${comment}
-export const ${methodName}Api = (${paramType}): ${returnType} => {
-  return httpHandler(${requestConfig})
-}`;
   }
 
   /**
@@ -302,13 +304,23 @@ export const ${methodName}Api = (${paramType}): ${returnType} => {
    */
   private generateMethodInfo(path: string): MethodInfo {
     const pathParts = path.split('/').filter(Boolean);
-    const secondLast = pathParts[pathParts.length - 2] || '';
-    const last = pathParts[pathParts.length - 1] || '';
+    const { naming } = this.config;
 
-    // 方法名使用倒数第二个和最后一个路径段合并
-    const methodName = toCamelCase(`${secondLast}-${last}`);
-    const requestType = `${toPascalCase(methodName)}Request`;
-    const responseType = `${toPascalCase(methodName)}Response`;
+    // 根据配置的段数从后往前取路径段
+    const segments = pathParts.slice(-naming.methodNameSegments);
+    const methodNameBase = segments.join('-');
+
+    // 根据配置生成方法名和类型名
+    const methodName = naming.useCamelCase
+      ? toCamelCase(methodNameBase)
+      : methodNameBase;
+
+    const typeNameBase = naming.usePascalCase
+      ? toPascalCase(methodNameBase)
+      : methodNameBase;
+
+    const requestType = `${typeNameBase}${naming.requestTypeSuffix}`;
+    const responseType = `${typeNameBase}${naming.responseTypeSuffix}`;
 
     return { methodName, requestType, responseType };
   }

@@ -20,7 +20,8 @@
     "build:analyze": "pnpm vite build --mode analyze",
     "dev": "pnpm vite --mode development",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+    "typecheck": "vue-tsc --noEmit --skipLibCheck",
+    "att": "pnpx tsx src/utils/openapi-generator/index.ts"
   },
   "imports": {
     "#/*": "./src/*"

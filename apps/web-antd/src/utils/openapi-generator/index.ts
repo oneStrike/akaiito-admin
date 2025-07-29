@@ -1,11 +1,11 @@
-import type { GeneratorConfig } from './config';
+import type { OpenAPIGeneratorConfig } from './config';
 import type { GeneratedFile } from './types';
 
 import path from 'node:path';
 import process from 'node:process';
 
-import { DEFAULT_CONFIG } from './config';
-import { clearDirectory, ensureDirectory, writeFile } from './file-utils';
+import { defaultConfig } from './config';
+import { ensureDirectory, writeFile } from './file-utils';
 import { OpenAPIGenerator } from './generator';
 
 /**
@@ -40,19 +40,14 @@ export async function generateAPIFromOpenAPI(
  * 生成 API 代码的完整流程
  */
 export async function generateAPI(
-  config: Partial<GeneratorConfig> = {},
+  config: Partial<OpenAPIGeneratorConfig> = {},
 ): Promise<void> {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
+  const finalConfig = { ...defaultConfig, ...config };
   const outputDir = path.resolve(process.cwd(), finalConfig.outputDir);
-  const typesDir = path.join(outputDir, finalConfig.typesDirName);
+  const typesDir = finalConfig.typesOutputDir;
 
   try {
     console.log('开始生成API代码...');
-
-    // 清空现有文件
-    if (finalConfig.clearOutputDir) {
-      await clearDirectory(outputDir);
-    }
 
     // 确保目录存在
     await ensureDirectory(outputDir);
