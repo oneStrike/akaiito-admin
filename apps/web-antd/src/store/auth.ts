@@ -1,7 +1,6 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type { UserInfo } from '@vben/types';
 
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import type { UserLoginRequest } from '#/apis/types/user';
 
 import { LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
@@ -10,8 +9,8 @@ import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 import { notification } from 'ant-design-vue';
 import { defineStore } from 'pinia';
 
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { publicKeyApi } from '#/apis';
+import { logoutApi } from '#/api';
+import { publicKeyApi, userInfoApi, userLoginApi } from '#/apis';
 import { $t } from '#/locales';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -28,29 +27,24 @@ export const useAuthStore = defineStore('auth', () => {
    * @param params 登录表单数据
    */
   async function authLogin(
-    params: Recordable<any>,
+    params: UserLoginRequest,
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
     let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
-      const { accessToken } = await loginApi(params);
+      const { tokens } = await userLoginApi(params);
 
       // 如果成功获取到 accessToken
-      if (accessToken) {
-        accessStore.setAccessToken(accessToken);
+      if (tokens.accessToken) {
+        accessStore.setAccessToken(tokens.accessToken);
 
         // 获取用户信息并存储到 accessStore 中
-        const [fetchUserInfoResult, accessCodes] = await Promise.all([
-          fetchUserInfo(),
-          getAccessCodesApi(),
-        ]);
-
-        userInfo = fetchUserInfoResult;
+        userInfo = await fetchUserInfo();
+        userInfo.token = tokens.accessToken;
 
         userStore.setUserInfo(userInfo);
-        accessStore.setAccessCodes(accessCodes);
 
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
@@ -101,7 +95,16 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function fetchUserInfo() {
     let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfoApi();
+    const user = await userInfoApi();
+    userInfo = {
+      ...user,
+      userId: String(user.id),
+      realName: user.username,
+      avatar: user.avatar || '',
+      desc: '',
+      homePath: preferences.app.defaultHomePath,
+      token: '',
+    };
     userStore.setUserInfo(userInfo);
     return userInfo;
   }
