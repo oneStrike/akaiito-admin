@@ -1,11 +1,7 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-<div>作者</div>
+  <div>作者</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

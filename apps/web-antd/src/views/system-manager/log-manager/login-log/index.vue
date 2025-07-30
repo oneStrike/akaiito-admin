@@ -1,11 +1,7 @@
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 
 <template>
-<div>登录日志</div>
+  <div>登录日志</div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
