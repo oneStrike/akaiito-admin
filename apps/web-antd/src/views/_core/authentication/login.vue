@@ -17,6 +17,11 @@ async function fetchCaptcha() {
 }
 fetchCaptcha();
 
+async function login(params: any) {
+  params.captchaId = captchaData.value?.captchaId;
+  authStore.authLogin(params);
+}
+
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {
@@ -41,6 +46,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       component: 'VbenInput',
       componentProps: {
         placeholder: '请输入验证码',
+        maxlength: 4,
       },
       suffix: () =>
         h(
@@ -76,6 +82,6 @@ const formSchema = computed((): VbenFormSchema[] => {
     :show-qrcode-login="false"
     :show-register="false"
     :show-third-party-login="false"
-    @submit="authStore.authLogin"
+    @submit="login"
   />
 </template>
