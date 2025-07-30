@@ -9,6 +9,13 @@ import type { DeepPartial } from '@vben-core/typings';
  */
 
 function defineOverridesPreferences(preferences: DeepPartial<Preferences>) {
+  preferences.app = {
+    watermark: true,
+  };
+
+  preferences.copyright = {
+    companyName: 'Akaiito',
+  };
   return preferences;
 }
 
