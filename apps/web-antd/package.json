@@ -44,6 +44,8 @@
     "ant-design-vue": "catalog:",
     "dayjs": "catalog:",
     "pinia": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "unplugin-vue-components": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:"
   }
