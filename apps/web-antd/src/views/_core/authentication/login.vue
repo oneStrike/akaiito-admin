@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { VbenFormSchema } from '@vben/common-ui';
 
-import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
+import { AuthenticationLogin, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { getCaptchaApi } from '#/apis';
@@ -11,9 +11,11 @@ defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
 
-getCaptchaApi().then((res) => {
-  console.warn(res);
-});
+const captchaData = ref();
+async function fetchCaptcha() {
+  captchaData.value = await getCaptchaApi();
+}
+fetchCaptcha();
 
 const formSchema = computed((): VbenFormSchema[] => {
   return [
@@ -36,11 +38,30 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
     },
     {
-      component: markRaw(SliderCaptcha),
+      component: 'VbenInput',
+      componentProps: {
+        placeholder: '请输入验证码',
+      },
+      suffix: () =>
+        h(
+          'div',
+          {
+            class: 'flex items-center gap-2',
+          },
+          [
+            // 验证码图片
+            h('img', {
+              src: captchaData.value?.data,
+              alt: '验证码',
+              class: 'h-14 w-30 cursor-pointer',
+              onClick: fetchCaptcha,
+              title: '点击刷新验证码',
+            }),
+          ],
+        ),
       fieldName: 'captcha',
-      rules: z.boolean().refine((value) => value, {
-        message: $t('authentication.verifyRequiredTip'),
-      }),
+      label: '验证码',
+      rules: z.string().min(4, { message: '请输入正确的验证码' }),
     },
   ];
 });
