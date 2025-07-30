@@ -10,7 +10,7 @@ import type { DeepPartial } from '@vben-core/typings';
 
 function defineOverridesPreferences(preferences: DeepPartial<Preferences>) {
   preferences.app = {
-    watermark: true,
+    watermark: false,
   };
 
   preferences.copyright = {
