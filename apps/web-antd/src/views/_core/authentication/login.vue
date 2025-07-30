@@ -4,6 +4,8 @@ import type { VbenFormSchema } from '@vben/common-ui';
 import { AuthenticationLogin, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
+import forge from 'node-forge';
+
 import { getCaptchaApi } from '#/apis';
 import { useAuthStore } from '#/store';
 
@@ -18,7 +20,19 @@ async function fetchCaptcha() {
 fetchCaptcha();
 
 async function login(params: any) {
-  params.captchaId = captchaData.value?.captchaId;
+  params.captchaId = captchaData.value?.id;
+  const publicKeyPEM = await authStore.getRsaPublicKey();
+
+  const publicKeyPem = forge.pki.publicKeyFromPem(publicKeyPEM);
+  // 使用OAEP填充进行加密
+  const encrypted = publicKeyPem.encrypt(params.password, 'RSA-OAEP', {
+    md: forge.md.sha256.create(), // 使用SHA-256作为哈希函数
+    mgf1: {
+      md: forge.md.sha256.create(), // 使用SHA-256作为MGF1的哈希函数
+    },
+  });
+  // 使用加密后的密码
+  params.password = forge.util.encode64(encrypted);
   authStore.authLogin(params);
 }
 

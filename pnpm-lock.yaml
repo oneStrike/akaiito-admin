@@ -99,6 +99,9 @@ catalogs:
     '@types/node':
       specifier: ^22.16.0
       version: 22.16.0
+    '@types/node-forge':
+      specifier: ^1.3.13
+      version: 1.3.13
     '@types/nprogress':
       specifier: ^0.2.3
       version: 0.2.3
@@ -312,6 +315,9 @@ catalogs:
     nitropack:
       specifier: ^2.11.13
       version: 2.11.13
+    node-forge:
+      specifier: ^1.3.1
+      version: 1.3.1
     nprogress:
       specifier: ^0.2.0
       version: 0.2.0
@@ -619,6 +625,9 @@ importers:
 
   apps/web-antd:
     dependencies:
+      '@types/node-forge':
+        specifier: 'catalog:'
+        version: 1.3.13
       '@vben/access':
         specifier: workspace:*
         version: link:../../packages/effects/access
@@ -670,6 +679,9 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.13
+      node-forge:
+        specifier: 'catalog:'
+        version: 1.3.1
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
@@ -4514,6 +4526,9 @@ packages:
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+
+  '@types/node-forge@1.3.13':
+    resolution: {integrity: sha512-zePQJSW5QkwSHKRApqWCVKeKoSOt4xvEnLENZPjyvm9Ezdf/EyDeJM7jqLzOwjVICQQzvLZ63T55MKdJB5H6ww==}
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
@@ -14387,7 +14402,7 @@ snapshots:
 
   '@types/conventional-commits-parser@5.0.1':
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 22.16.0
 
   '@types/deep-eql@4.0.2': {}
 
@@ -14445,6 +14460,10 @@ snapshots:
 
   '@types/minimatch@3.0.5': {}
 
+  '@types/node-forge@1.3.13':
+    dependencies:
+      '@types/node': 22.16.0
+
   '@types/node@12.20.55': {}
 
   '@types/node@22.15.3':
@@ -14491,7 +14510,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 22.16.0
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.35.1(@typescript-eslint/parser@8.35.1(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3))(eslint@9.30.1(jiti@2.4.2))(typescript@5.8.3)':

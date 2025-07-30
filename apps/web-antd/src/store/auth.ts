@@ -11,6 +11,7 @@ import { notification } from 'ant-design-vue';
 import { defineStore } from 'pinia';
 
 import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
+import { publicKeyApi } from '#/apis';
 import { $t } from '#/locales';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
 
   const loginLoading = ref(false);
+  const publicKey = ref('');
 
   /**
    * 异步处理登录操作
@@ -104,6 +106,18 @@ export const useAuthStore = defineStore('auth', () => {
     return userInfo;
   }
 
+  /**
+   * 获取公钥key
+   */
+  async function getRsaPublicKey() {
+    if (publicKey.value) {
+      return publicKey.value;
+    }
+    const res = await publicKeyApi();
+    publicKey.value = res.publicKey;
+    return publicKey.value;
+  }
+
   function $reset() {
     loginLoading.value = false;
   }
@@ -114,5 +128,6 @@ export const useAuthStore = defineStore('auth', () => {
     fetchUserInfo,
     loginLoading,
     logout,
+    getRsaPublicKey,
   };
 });
