@@ -25,16 +25,30 @@ setupVbenVxeTable({
         proxyConfig: {
           autoLoad: true,
           response: {
-            result: 'items',
+            result: 'list',
             total: 'total',
-            list: 'items',
+            list: 'list',
           },
           showActiveMsg: true,
           showResponseMsg: false,
         },
         round: true,
         showOverflow: true,
-        size: 'small',
+        size: 'large',
+        pagerConfig: {
+          pageSize: 15,
+          pageSizes: [15, 30, 45, 75, 100],
+          layouts: [
+            'PrevJump',
+            'PrevPage',
+            'Jump',
+            'PageCount',
+            'NextPage',
+            'NextJump',
+            'Sizes',
+            'Total',
+          ],
+        },
       } as VxeTableGridOptions,
     });
 

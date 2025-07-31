@@ -94,12 +94,11 @@ const gridOptions: VxeTableGridOptions<RowType> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        const { list } = await noticePageApi({
-          pageIndex: page.currentPage,
+        return await noticePageApi({
+          pageIndex: --page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
-        return { items: list };
       },
     },
   },
