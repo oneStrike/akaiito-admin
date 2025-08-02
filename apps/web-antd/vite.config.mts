@@ -14,7 +14,11 @@ export default defineConfig(async () => {
           resolvers: [AntDesignVueResolver()],
         }),
         Components({
-          resolvers: [AntDesignVueResolver()],
+          resolvers: [
+            AntDesignVueResolver({
+              importStyle: false,
+            }),
+          ],
         }),
       ],
       server: {

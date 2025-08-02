@@ -3,9 +3,12 @@ export type PlatformResponse = PlatformResponseDto[];
 /**
  *  类型定义 [SearchRequest]
  *  @来源 第三方漫画平台内容解析
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type SearchRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 搜索关键词 */
   keyword: string;
 
@@ -18,11 +21,14 @@ export type SearchResponse = SearchComicItemDto;
 /**
  *  类型定义 [PlatformResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type PlatformResponseDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 平台名称code */
   code: string;
+
   /* 平台名称 */
   name: string;
 };
@@ -30,9 +36,11 @@ export type PlatformResponseDto = {
 /**
  *  类型定义 [SearchComicItemDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type SearchComicItemDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 作者列表 */
   author: string[];
   /* 封面图片URL */
@@ -41,6 +49,7 @@ export type SearchComicItemDto = {
   id: string;
   /* 漫画名称 */
   name: string;
+
   /* 来源平台 */
   source: string;
 };

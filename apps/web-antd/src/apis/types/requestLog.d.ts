@@ -1,9 +1,12 @@
 /**
  *  类型定义 [RequestLogPageRequest]
  *  @来源 管理端请求日志模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type RequestLogPageRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 结束时间 */
   endDate?: string;
 
@@ -36,6 +39,9 @@ export type RequestLogPageRequest = {
 };
 
 export type RequestLogPageResponse = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 列表数据 */
   list?: RequestLogDto[];
 
@@ -52,9 +58,12 @@ export type RequestLogPageResponse = {
 /**
  *  类型定义 [RequestLogDetailRequest]
  *  @来源 管理端请求日志模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type RequestLogDetailRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   id: number;
 };
 
@@ -63,9 +72,11 @@ export type RequestLogDetailResponse = RequestLogDto;
 /**
  *  类型定义 [RequestLogDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type RequestLogDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 创建时间 */
   createdAt: string;
   /* 请求方法 */
@@ -92,6 +103,7 @@ export type RequestLogDto = {
   userAgent: string;
   /* 用户主键ID */
   userId?: number;
+
   /* 用户名 */
   username?: string;
 };

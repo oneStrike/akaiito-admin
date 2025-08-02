@@ -2,12 +2,20 @@
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { ClientPagePageResponse } from '#/apis/types/clientPage';
-import type { NoticeDetailResponse } from '#/apis/types/notice';
+import type { NoticePageResponseDto } from '#/apis/types/notice';
 
 import { Page } from '@vben/common-ui';
 
+import { message } from 'ant-design-vue';
+import dayjs from 'dayjs';
+
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { clientPagePageApi, noticePageApi } from '#/apis';
+import {
+  batchDeleteNoticeApi,
+  batchUpdateNoticeStatusApi,
+  clientPagePageApi,
+  noticePageApi,
+} from '#/apis';
 import { useBitMask } from '#/hooks/useBitmask';
 import { useDate } from '#/hooks/useDate';
 import {
@@ -18,9 +26,10 @@ import {
   noticeTypeObject,
 } from '#/views/app-manager/notice/shared';
 
+type RecordItem = NoticePageResponseDto;
+
 const clientPages = ref<ClientPagePageResponse['list']>();
 const formOptions = computed<VbenFormProps>(() => ({
-  fieldMappingTime: [['date', ['start', 'end']]],
   schema: [
     {
       component: 'Select',
@@ -87,15 +96,65 @@ clientPagePageApi({
     ...item,
   }));
 });
+// 添加一个计算属性来判断状态
+const getStatusInfo = (row: RecordItem) => {
+  if (!row.isPublished) {
+    return { text: '未发布', class: 'text-gray-500' };
+  }
 
-const gridOptions: VxeTableGridOptions<NoticeDetailResponse> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },
+  const now = dayjs();
+  const endTime = dayjs(row.publishEndTime);
+
+  if (now.isAfter(endTime)) {
+    return { text: '已过期', class: 'text-red-500' };
+  }
+
+  return { text: '已发布', class: 'text-green-500' };
+};
+
+// 添加获取优先级颜色样式的函数
+const getPriorityLevelStyle = (priorityLevel: number) => {
+  switch (priorityLevel) {
+    case 1: {
+      // 低优先级
+      return {
+        text: noticePriorityObject[priorityLevel],
+        class: 'text-gray-500',
+      };
+    }
+    case 2: {
+      // 中优先级
+      return {
+        text: noticePriorityObject[priorityLevel],
+        class: 'text-blue-500',
+      };
+    }
+    case 3: {
+      // 高优先级
+      return {
+        text: noticePriorityObject[priorityLevel],
+        class: 'text-orange-500',
+      };
+    }
+    case 4: {
+      // 紧急
+      return {
+        text: noticePriorityObject[priorityLevel],
+        class: 'text-red-500',
+      };
+    }
+    default: {
+      return {
+        text: noticePriorityObject[priorityLevel] || '-',
+        class: '',
+      };
+    }
+  }
+};
+const gridOptions: VxeTableGridOptions<RecordItem> = {
   columns: [
     { title: '序号', type: 'seq', width: 50 },
-    { align: 'center', field: 'title', title: '通知标题' },
+    { align: 'center', field: 'title', title: '通知标题', minWidth: 150 },
     {
       field: 'noticeType',
       title: '通知类型',
@@ -117,9 +176,7 @@ const gridOptions: VxeTableGridOptions<NoticeDetailResponse> = {
       field: 'priorityLevel',
       title: '紧急程度',
       width: 150,
-      formatter: ({ cellValue }) => {
-        return noticePriorityObject[cellValue] || '-';
-      },
+      slots: { default: 'priorityLevel' },
     },
     {
       field: 'pageCode',
@@ -136,20 +193,24 @@ const gridOptions: VxeTableGridOptions<NoticeDetailResponse> = {
       field: 'publishStartTime',
       title: '开始时间',
       width: 180,
-      formatter: ({ cellValue }) => {
-        return useDate.formatDate(cellValue) || '-';
-      },
     },
     {
       field: 'publishEndTime',
       title: '结束时间',
       width: 180,
-      formatter: ({ cellValue }) => {
-        return useDate.formatDate(cellValue) || '-';
-      },
     },
-    { field: 'price1', title: '发布状态', width: 150 },
-    { field: 'price2', title: '操作', width: 160 },
+    {
+      field: 'isPublished',
+      title: '发布状态',
+      width: 150,
+      slots: { default: 'isPublished' },
+    },
+    {
+      field: 'action',
+      title: '操作',
+      width: 260,
+      slots: { default: 'action' },
+    },
   ],
   exportConfig: {},
   height: 'auto',
@@ -158,11 +219,18 @@ const gridOptions: VxeTableGridOptions<NoticeDetailResponse> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
-        return await noticePageApi({
+        const data = await noticePageApi({
           pageIndex: --page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        data.list?.forEach((item) => {
+          item.publishStartTime =
+            useDate.formatDate(item.publishStartTime) || '-';
+          item.publishEndTime = useDate.formatDate(item.publishEndTime) || '-';
+          item.publishedStatus = getStatusInfo(item);
+        });
+        return data;
       },
     },
   },
@@ -179,14 +247,68 @@ const gridOptions: VxeTableGridOptions<NoticeDetailResponse> = {
   },
 };
 
-const [Grid] = useVbenVxeGrid({
-  formOptions,
+const [Grid, GridApi] = useVbenVxeGrid({
+  formOptions: formOptions.value,
   gridOptions,
 });
+
+async function togglePublish(row: RecordItem) {
+  if (dayjs(row.publishEndTime).isBefore(dayjs())) {
+    message.error('当前时间已超过发布时间');
+    return;
+  }
+  await batchUpdateNoticeStatusApi({
+    ids: [row.id],
+    isPublished: !row.isPublished,
+  });
+  message.success(row.isPublished ? '取消发布成功' : '发布成功');
+  GridApi.query();
+}
+
+async function deleteNotice(row: RecordItem) {
+  await batchDeleteNoticeApi({
+    ids: [row.id],
+  });
+  message.success('删除成功');
+  GridApi.query();
+}
 </script>
 
 <template>
   <Page auto-content-height>
-    <Grid />
+    <Grid>
+      <template #toolbar-actions>
+        <div class="ml-2">
+          <a-button type="primary">添加</a-button>
+        </div>
+      </template>
+
+      <template #isPublished="{ row }">
+        <span :class="row.publishedStatus.class">
+          {{ row.publishedStatus.text }}
+        </span>
+      </template>
+      <template #priorityLevel="{ row }">
+        <span :class="getPriorityLevelStyle(row.priorityLevel).class">
+          {{ getPriorityLevelStyle(row.priorityLevel).text }}
+        </span>
+      </template>
+      <template #action="{ row }">
+        <a-popconfirm
+          :title="`是否${row.isPublished ? '取消发布' : '发布'}？`"
+          @confirm="togglePublish(row)"
+        >
+          <a-button type="link" :danger="row.isPublished">
+            {{ row.isPublished ? '取消发布' : '发布' }}
+          </a-button>
+        </a-popconfirm>
+        <a-divider type="vertical" />
+        <a-popconfirm title="是否删除当前项？" @confirm="deleteNotice(row)">
+          <a-button type="link" danger> 删除 </a-button>
+        </a-popconfirm>
+        <a-divider type="vertical" />
+        <a-button size="small" type="link"> 编辑</a-button>
+      </template>
+    </Grid>
   </Page>
 </template>

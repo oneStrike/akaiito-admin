@@ -95,7 +95,7 @@ export function mapSchemaToType(schema: any, depth: number = 0): string {
           return 'Record<string, any>';
         }
 
-        return `{\n${props.join(';\n')};\n}`;
+        return `{\n${props.join(';\n')};\n  /** 任意合法数值 */\n  [property: string]: any;\n}`;
       }
 
       // 处理 additionalProperties

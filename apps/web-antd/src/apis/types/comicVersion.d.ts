@@ -1,7 +1,7 @@
 /**
  *  类型定义 [CreateComicVersionRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type CreateComicVersionRequest = CreateComicVersionDto;
 
@@ -10,9 +10,12 @@ export type CreateComicVersionResponse = IdDto;
 /**
  *  类型定义 [ComicVersionPageRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type ComicVersionPageRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 漫画ID（精确匹配） */
   comicId: number;
 
@@ -51,6 +54,9 @@ export type ComicVersionPageRequest = {
 };
 
 export type ComicVersionPageResponse = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 列表数据 */
   list?: BaseComicVersionDto[];
 
@@ -67,9 +73,12 @@ export type ComicVersionPageResponse = {
 /**
  *  类型定义 [ComicVersionDetailRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type ComicVersionDetailRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 主键id */
   id: number;
 };
@@ -79,7 +88,7 @@ export type ComicVersionDetailResponse = ComicVersionDetailResponseDto;
 /**
  *  类型定义 [UpdateComicVersionRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UpdateComicVersionRequest = UpdateComicVersionDto;
 
@@ -88,7 +97,7 @@ export type UpdateComicVersionResponse = IdDto;
 /**
  *  类型定义 [BatchUpdateVersionPublishStatusRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type BatchUpdateVersionPublishStatusRequest = BatchPublishDto;
 
@@ -97,7 +106,7 @@ export type BatchUpdateVersionPublishStatusResponse = CountDto;
 /**
  *  类型定义 [BatchUpdateVersionRecommendedStatusRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type BatchUpdateVersionRecommendedStatusRequest =
   UpdateVersionRecommendedStatusDto;
@@ -107,7 +116,7 @@ export type BatchUpdateVersionRecommendedStatusResponse = CountDto;
 /**
  *  类型定义 [BatchUpdateVersionEnabledStatusRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type BatchUpdateVersionEnabledStatusRequest =
   UpdateVersionEnabledStatusDto;
@@ -117,7 +126,7 @@ export type BatchUpdateVersionEnabledStatusResponse = CountDto;
 /**
  *  类型定义 [DeleteComicVersionRequest]
  *  @来源 漫画版本管理模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type DeleteComicVersionRequest = IdDto;
 
@@ -126,9 +135,11 @@ export type DeleteComicVersionResponse = IdDto;
 /**
  *  类型定义 [CreateComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type CreateComicVersionDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 关联的原始漫画ID */
   comicId: number;
   /* 版权信息 */
@@ -153,6 +164,7 @@ export type CreateComicVersionDto = {
   remark?: string;
   /* 翻译组/汉化组名称 */
   translatorGroup?: string;
+
   /* 版本名称（如：英语版、日语版、XX汉化组等） */
   versionName: string;
 };
@@ -160,9 +172,12 @@ export type CreateComicVersionDto = {
 /**
  *  类型定义 [IdDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type IdDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 主键id */
   id: number;
 };
@@ -170,9 +185,11 @@ export type IdDto = {
 /**
  *  类型定义 [BaseComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type BaseComicVersionDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 关联的原始漫画ID */
   comicId: number;
   /* 版权信息 */
@@ -217,6 +234,7 @@ export type BaseComicVersionDto = {
   translatorGroup?: string;
   /* 更新时间 */
   updatedAt: string;
+
   /* 版本名称（如：英语版、日语版、XX汉化组等） */
   versionName: string;
 };
@@ -224,9 +242,11 @@ export type BaseComicVersionDto = {
 /**
  *  类型定义 [ComicVersionDetailResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type ComicVersionDetailResponseDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 关联的原始漫画ID */
   comicId: number;
   /* 版权信息 */
@@ -271,6 +291,7 @@ export type ComicVersionDetailResponseDto = {
   translatorGroup?: string;
   /* 更新时间 */
   updatedAt: string;
+
   /* 版本名称（如：英语版、日语版、XX汉化组等） */
   versionName: string;
 };
@@ -278,9 +299,11 @@ export type ComicVersionDetailResponseDto = {
 /**
  *  类型定义 [UpdateComicVersionDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UpdateComicVersionDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 版权信息 */
   copyright?: string;
   /* 版本描述 */
@@ -309,6 +332,7 @@ export type UpdateComicVersionDto = {
   sortOrder?: number;
   /* 翻译组/汉化组名称 */
   translatorGroup?: string;
+
   /* 版本名称（如：英语版、日语版、XX汉化组等） */
   versionName?: string;
 };
@@ -316,11 +340,14 @@ export type UpdateComicVersionDto = {
 /**
  *  类型定义 [BatchPublishDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type BatchPublishDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 主键id */
   ids: number[];
+
   /* 发布或者取消发布 */
   isPublished: boolean;
 };
@@ -328,9 +355,12 @@ export type BatchPublishDto = {
 /**
  *  类型定义 [CountDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type CountDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 操作成功的数据数量 */
   count: number;
 };
@@ -338,13 +368,16 @@ export type CountDto = {
 /**
  *  类型定义 [UpdateVersionRecommendedStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UpdateVersionRecommendedStatusDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 主键id */
   ids: number[];
   /* 启用或者禁用 */
   isEnabled: boolean;
+
   /* 推荐状态 */
   isRecommended: boolean;
 };
@@ -352,11 +385,14 @@ export type UpdateVersionRecommendedStatusDto = {
 /**
  *  类型定义 [UpdateVersionEnabledStatusDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UpdateVersionEnabledStatusDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 主键id */
   ids: number[];
+
   /* 启用或者禁用 */
   isEnabled: boolean;
 };

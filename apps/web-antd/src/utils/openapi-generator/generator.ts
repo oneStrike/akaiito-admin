@@ -176,8 +176,11 @@ export class OpenAPIGenerator {
       apiMethods.push(apiMethod);
     }
 
+    // 递归收集所有依赖的类型
+    const allReferencedTypes = this.collectAllDependencies(referencedTypes);
+
     // 生成引用的类型定义
-    for (const typeName of referencedTypes) {
+    for (const typeName of allReferencedTypes) {
       const schemaTypeDef = this.generateSchemaType(typeName);
       if (schemaTypeDef) {
         typeDefinitions.push(schemaTypeDef);
@@ -240,6 +243,40 @@ export class OpenAPIGenerator {
     }
 
     return grouped;
+  }
+
+  /**
+   * 递归收集所有依赖的类型
+   */
+  private collectAllDependencies(initialTypes: Set<string>): Set<string> {
+    const allTypes = new Set<string>();
+    const visited = new Set<string>();
+
+    const collectDependencies = (typeName: string) => {
+      if (visited.has(typeName)) return;
+      visited.add(typeName);
+      allTypes.add(typeName);
+
+      // 获取该类型的 schema
+      const schema = this.spec?.components?.schemas?.[typeName];
+      if (!schema) return;
+
+      // 收集该类型的所有依赖
+      const dependencies = new Set<string>();
+      collectReferencedTypes(schema, dependencies);
+
+      // 递归收集依赖的依赖
+      for (const dep of dependencies) {
+        collectDependencies(dep);
+      }
+    };
+
+    // 从初始类型开始收集
+    for (const typeName of initialTypes) {
+      collectDependencies(typeName);
+    }
+
+    return allTypes;
   }
 
   /**
@@ -440,10 +477,13 @@ export type ${typeName} = ${refType}`;
       updateTime,
     );
 
-    // 使用 type 而不是 interface，不添加索引签名
+    // 使用 type 而不是 interface，添加索引签名
     return `${comment}
 export type ${typeName} = {
 ${properties.join('\n\n')}
+
+  /** 任意合法数值 */
+  [property: string]: any
 }`;
   }
 
@@ -487,9 +527,12 @@ ${properties.join('\n\n')}
 
     if (properties.length === 0) return null;
 
-    // 对象类型不添加索引签名
+    // 对象类型添加索引签名
     return `export type ${typeName} = {
 ${properties.join('\n\n')}
+
+  /** 任意合法数值 */
+  [property: string]: any
 }`;
   }
 
@@ -510,7 +553,7 @@ ${properties.join('\n\n')}
         }
         if (s.properties) {
           const props = this.generatePropertiesFromSchema(s);
-          return `{\n${props.join('\n')}\n}`;
+          return `{\n${props.join('\n')}\n  /** 任意合法数值 */\n  [property: string]: any\n}`;
         }
         return mapSchemaToType(s);
       });
@@ -533,7 +576,7 @@ export type ${typeName} = ${types.join(' & ')}`;
         }
         if (s.properties) {
           const props = this.generatePropertiesFromSchema(s);
-          return `{\n${props.join('\n')}\n}`;
+          return `{\n${props.join('\n')}\n  /** 任意合法数值 */\n  [property: string]: any\n}`;
         }
         return mapSchemaToType(s);
       });
@@ -617,10 +660,13 @@ export type ${typeName} = Record<string, ${valueType}>`;
       updateTime,
     );
 
-    // 对象类型不添加索引签名
+    // 对象类型添加索引签名
     return `${comment}
 export type ${typeName} = {
 ${properties.join('\n')}
+
+  /** 任意合法数值 */
+  [property: string]: any
 }`;
   }
 

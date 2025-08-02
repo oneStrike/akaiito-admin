@@ -3,7 +3,7 @@ export type GetCaptchaResponse = CaptchaDto;
 /**
  *  类型定义 [UserLoginRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserLoginRequest = UserLoginDto;
 
@@ -12,7 +12,7 @@ export type UserLoginResponse = LoginResponseDto;
 /**
  *  类型定义 [UserLogoutRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserLogoutRequest = TokenDto;
 
@@ -21,7 +21,7 @@ export type UserLogoutResponse = boolean;
 /**
  *  类型定义 [UserRegisterRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserRegisterRequest = UserRegisterDto;
 
@@ -30,7 +30,7 @@ export type UserRegisterResponse = IdDto;
 /**
  *  类型定义 [UserRefreshTokenRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserRefreshTokenRequest = RefreshTokenDto;
 
@@ -39,7 +39,7 @@ export type UserRefreshTokenResponse = RefreshTokenResponseDto;
 /**
  *  类型定义 [UserUpdatePasswordRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserUpdatePasswordRequest = UpdatePasswordDto;
 
@@ -48,7 +48,7 @@ export type UserUpdatePasswordResponse = UserDto;
 /**
  *  类型定义 [UserUpdateInfoRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserUpdateInfoRequest = UpdateUserDto;
 
@@ -59,9 +59,12 @@ export type UserInfoResponse = UserDto;
 /**
  *  类型定义 [UserInfoByIdRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserInfoByIdRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 主键id */
   id: number;
 };
@@ -71,9 +74,12 @@ export type UserInfoByIdResponse = UserDto;
 /**
  *  类型定义 [UserPageRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserPageRequest = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 结束时间 */
   endDate?: string;
 
@@ -100,6 +106,9 @@ export type UserPageRequest = {
 };
 
 export type UserPageResponse = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
   /* 列表数据 */
   list?: UserDto[];
 
@@ -116,7 +125,7 @@ export type UserPageResponse = {
 /**
  *  类型定义 [UserDeleteRequest]
  *  @来源 管理端用户模块
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserDeleteRequest = IdDto;
 
@@ -125,11 +134,14 @@ export type UserDeleteResponse = IdDto;
 /**
  *  类型定义 [CaptchaDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type CaptchaDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 验证码 */
   data: string;
+
   /* 验证码 key */
   id: string;
 };
@@ -137,15 +149,18 @@ export type CaptchaDto = {
 /**
  *  类型定义 [UserLoginDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserLoginDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 验证码 */
   captcha: string;
   /* 验证码ID */
   captchaId: string;
   /* 密码 */
   password: string;
+
   /* 用户名 */
   username: string;
 };
@@ -153,11 +168,14 @@ export type UserLoginDto = {
 /**
  *  类型定义 [LoginResponseDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type LoginResponseDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 令牌信息 */
   tokens: TokenDto;
+
   /* 用户信息 */
   user: UserDto;
 };
@@ -165,77 +183,14 @@ export type LoginResponseDto = {
 /**
  *  类型定义 [TokenDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type TokenDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 账号令牌 */
   accessToken: string;
-  /* 刷新令牌 */
-  refreshToken: string;
-};
 
-/**
- *  类型定义 [UserRegisterDto]
- *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
- */
-export type UserRegisterDto = {
-  /* 头像 */
-  avatar?: string;
-  /* 密码 */
-  confirmPassword: string;
-  /* 手机号 */
-  mobile: string;
-  /* 密码 */
-  password: string;
-  /* 角色 0普通管理员 1超级管理员 */
-  role: number;
-  /* 用户名 */
-  username: string;
-};
-
-/**
- *  类型定义 [IdDto]
- *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
- */
-export type IdDto = {
-  /* 主键id */
-  id: number;
-};
-
-/**
- *  类型定义 [RefreshTokenDto]
- *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
- */
-export type RefreshTokenDto = {
-  /* 刷新令牌 */
-  refreshToken: string;
-};
-
-/**
- *  类型定义 [RefreshTokenResponseDto]
- *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
- */
-export type RefreshTokenResponseDto = {
-  /* 刷新令牌响应 */
-  tokens: TokenDto;
-};
-
-/**
- *  类型定义 [UpdatePasswordDto]
- *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
- */
-export type UpdatePasswordDto = {
-  /* 密码 */
-  confirmPassword: string;
-  /* 密码 */
-  newPassword: string;
-  /* 密码 */
-  oldPassword: string;
   /* 刷新令牌 */
   refreshToken: string;
 };
@@ -243,9 +198,11 @@ export type UpdatePasswordDto = {
 /**
  *  类型定义 [UserDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UserDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 头像 */
   avatar?: string;
   /* 创建时间 */
@@ -268,16 +225,100 @@ export type UserDto = {
   role: number;
   /* 更新时间 */
   updatedAt: string;
+
   /* 用户名 */
   username: string;
 };
 
 /**
+ *  类型定义 [UserRegisterDto]
+ *  @来源 components.schemas
+ *  @更新时间 2025-08-02 14:51:19
+ */
+export type UserRegisterDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+  /* 头像 */
+  avatar?: string;
+  /* 密码 */
+  confirmPassword: string;
+  /* 手机号 */
+  mobile: string;
+  /* 密码 */
+  password: string;
+  /* 角色 0普通管理员 1超级管理员 */
+  role: number;
+
+  /* 用户名 */
+  username: string;
+};
+
+/**
+ *  类型定义 [IdDto]
+ *  @来源 components.schemas
+ *  @更新时间 2025-08-02 14:51:19
+ */
+export type IdDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
+  /* 主键id */
+  id: number;
+};
+
+/**
+ *  类型定义 [RefreshTokenDto]
+ *  @来源 components.schemas
+ *  @更新时间 2025-08-02 14:51:19
+ */
+export type RefreshTokenDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
+  /* 刷新令牌 */
+  refreshToken: string;
+};
+
+/**
+ *  类型定义 [RefreshTokenResponseDto]
+ *  @来源 components.schemas
+ *  @更新时间 2025-08-02 14:51:19
+ */
+export type RefreshTokenResponseDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+
+  /* 刷新令牌响应 */
+  tokens: TokenDto;
+};
+
+/**
+ *  类型定义 [UpdatePasswordDto]
+ *  @来源 components.schemas
+ *  @更新时间 2025-08-02 14:51:19
+ */
+export type UpdatePasswordDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
+  /* 密码 */
+  confirmPassword: string;
+  /* 密码 */
+  newPassword: string;
+  /* 密码 */
+  oldPassword: string;
+
+  /* 刷新令牌 */
+  refreshToken: string;
+};
+
+/**
  *  类型定义 [UpdateUserDto]
  *  @来源 components.schemas
- *  @更新时间 2025-07-29 19:32:23
+ *  @更新时间 2025-08-02 14:51:19
  */
 export type UpdateUserDto = {
+  /** 任意合法数值 */
+  [property: string]: any;
   /* 头像 */
   avatar?: string;
   /* 用户ID */
@@ -288,6 +329,7 @@ export type UpdateUserDto = {
   mobile: string;
   /* 角色 0普通管理员 1超级管理员 */
   role: number;
+
   /* 用户名 */
   username: string;
 };
