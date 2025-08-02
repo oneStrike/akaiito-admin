@@ -38,16 +38,6 @@ setupVbenVxeTable({
         pagerConfig: {
           pageSize: 15,
           pageSizes: [15, 30, 45, 75, 100],
-          layouts: [
-            'PrevJump',
-            'PrevPage',
-            'Jump',
-            'PageCount',
-            'NextPage',
-            'NextJump',
-            'Sizes',
-            'Total',
-          ],
         },
       } as VxeTableGridOptions,
     });

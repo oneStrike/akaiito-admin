@@ -17,6 +17,10 @@ export const noticeType = [
   },
 ];
 
+export const noticeTypeObject = Object.fromEntries(
+  noticeType.map((item) => [item.value, item.label]),
+);
+
 export const noticePriority = [
   {
     label: '低优先级',
@@ -35,6 +39,9 @@ export const noticePriority = [
     value: 3,
   },
 ];
+export const noticePriorityObject = Object.fromEntries(
+  noticePriority.map((item) => [item.value, item.label]),
+);
 
 export const enablePlatform = [
   {
