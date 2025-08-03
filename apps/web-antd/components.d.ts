@@ -11,6 +11,9 @@ declare module 'vue' {
     AButton: typeof import('ant-design-vue/es')['Button']
     ADivider: typeof import('ant-design-vue/es')['Divider']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
+    ATable: typeof import('ant-design-vue/es')['Table']
+    EsModalForm: typeof import('./src/components/es-modal-form/index.vue')['default']
+    EsTable: typeof import('./src/components/es-table/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

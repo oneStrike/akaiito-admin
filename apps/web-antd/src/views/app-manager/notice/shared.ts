@@ -17,10 +17,6 @@ export const noticeType = [
   },
 ];
 
-export const noticeTypeObject = Object.fromEntries(
-  noticeType.map((item) => [item.value, item.label]),
-);
-
 export const noticePriority = [
   {
     label: '低优先级',
@@ -39,21 +35,23 @@ export const noticePriority = [
     value: 3,
   },
 ];
-export const noticePriorityObject = Object.fromEntries(
-  noticePriority.map((item) => [item.value, item.label]),
-);
 
-export const enablePlatform = [
+export const formSchema: FormSchema = [
   {
-    label: 'H5',
-    value: 1,
+    field: 'title',
+    component: 'Input',
+    label: '标题',
+    rules: [{ required: true, message: '请输入标题' }],
   },
   {
-    label: 'APP',
-    value: 2,
+    field: 'content',
+    component: 'Textarea',
+    label: '内容',
+    rules: [{ required: true, message: '请输入内容' }],
   },
   {
-    label: '小程序',
-    value: 4,
+    field: 'type',
+    component: 'Select',
+    label: '类型',
   },
 ];
