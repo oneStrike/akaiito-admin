@@ -72,6 +72,9 @@ catalogs:
     '@tanstack/vue-store':
       specifier: ^0.7.1
       version: 0.7.1
+    '@tinymce/tinymce-vue':
+      specifier: ^6.3.0
+      version: 6.3.0
     '@types/archiver':
       specifier: ^6.0.3
       version: 6.0.3
@@ -429,6 +432,9 @@ catalogs:
     theme-colors:
       specifier: ^0.1.0
       version: 0.1.0
+    tinymce:
+      specifier: ^8.0.1
+      version: 8.0.1
     tippy.js:
       specifier: ^6.3.7
       version: 6.3.7
@@ -625,6 +631,9 @@ importers:
 
   apps/web-antd:
     dependencies:
+      '@tinymce/tinymce-vue':
+        specifier: 'catalog:'
+        version: 6.3.0(tinymce@8.0.1)(vue@3.5.17(typescript@5.8.3))
       '@types/node-forge':
         specifier: 'catalog:'
         version: 1.3.13
@@ -685,6 +694,9 @@ importers:
       pinia:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
+      tinymce:
+        specifier: 'catalog:'
+        version: 8.0.1
       unplugin-auto-import:
         specifier: 'catalog:'
         version: 19.3.0(@nuxt/kit@3.17.0(magicast@0.3.5))(@vueuse/core@13.4.0(vue@3.5.17(typescript@5.8.3)))
@@ -4443,6 +4455,15 @@ packages:
     resolution: {integrity: sha512-GYdZ3SJBQPzgxhuCE2fvpiH46qzHiVx5XzBSdtESgiqh4poj8UgckjGWYEhxaBbcVt1oLzh1m3Ql4TyH32TOzQ==}
     peerDependencies:
       vue: ^3.5.17
+
+  '@tinymce/tinymce-vue@6.3.0':
+    resolution: {integrity: sha512-DSP8Jhd3XqCCliTnusfbmz3D8GqQ4iRzkc4aadYHDcJPVjkaqopJ61McOdH82CSy599vGLkPjGzqJYWJkRMiUA==}
+    peerDependencies:
+      tinymce: ^8.0.0 || ^7.0.0 || ^6.0.0 || ^5.5.1
+      vue: ^3.5.17
+    peerDependenciesMeta:
+      tinymce:
+        optional: true
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -10375,6 +10396,9 @@ packages:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
 
+  tinymce@8.0.1:
+    resolution: {integrity: sha512-KQ/+KaWmkIzSkNCYmqhXD2mftt+EEhz1bd1QCVopa2DNkoJ/rYFXhMnYGg1gVcRQa43xkmmv0Jj0ph+05VY0hQ==}
+
   tinypool@1.1.1:
     resolution: {integrity: sha512-Zba82s87IFq9A9XmjiX5uZA/ARWDrB03OHlq+Vw1fSdt0I+4/Kutwy8BP4Y/y/aORMo61FQ0vIb5j44vSo5Pkg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -14378,6 +14402,12 @@ snapshots:
     dependencies:
       '@tanstack/virtual-core': 3.13.6
       vue: 3.5.17(typescript@5.8.3)
+
+  '@tinymce/tinymce-vue@6.3.0(tinymce@8.0.1)(vue@3.5.17(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.17(typescript@5.8.3)
+    optionalDependencies:
+      tinymce: 8.0.1
 
   '@tootallnate/once@1.1.2': {}
 
@@ -20909,6 +20939,8 @@ snapshots:
     dependencies:
       fdir: 6.4.6(picomatch@4.0.2)
       picomatch: 4.0.2
+
+  tinymce@8.0.1: {}
 
   tinypool@1.1.1: {}
 

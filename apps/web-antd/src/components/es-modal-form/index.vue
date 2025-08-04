@@ -37,7 +37,7 @@ const [BaseForm, formApi] = useVbenForm({
 });
 </script>
 <template>
-  <Modal :title="modalTitle" class="w-[900px]">
+  <Modal :title="modalTitle" class="w-[800px]">
     <template #prepend-footer>
       <a-button @click="formApi.resetForm()">重置</a-button>
     </template>

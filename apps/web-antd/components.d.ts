@@ -12,8 +12,11 @@ declare module 'vue' {
     ADivider: typeof import('ant-design-vue/es')['Divider']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
     ATable: typeof import('ant-design-vue/es')['Table']
+    AUpload: typeof import('ant-design-vue/es')['Upload']
+    EsEditor: typeof import('./src/components/es-editor/es-editor.vue')['default']
     EsModalForm: typeof import('./src/components/es-modal-form/index.vue')['default']
     EsTable: typeof import('./src/components/es-table/index.vue')['default']
+    EsUpload: typeof import('./src/components/es-upload/es-upload.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

@@ -59,7 +59,7 @@ const TimePicker = defineAsyncComponent(
 const TreeSelect = defineAsyncComponent(
   () => import('ant-design-vue/es/tree-select'),
 );
-const Upload = defineAsyncComponent(() => import('ant-design-vue/es/upload'));
+const Upload = defineAsyncComponent(() => import('#/components/es-upload'));
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,

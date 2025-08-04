@@ -56,7 +56,6 @@ export const noticePriority = [
 export const formSchema: EsFormSchema = [
   {
     component: 'Input',
-    // 对应组件的参数
     componentProps: {
       placeholder: '请输入通知标题',
     },
@@ -125,10 +124,6 @@ export const formSchema: EsFormSchema = [
     component: 'Upload',
     label: '弹窗背景',
     componentProps: {
-      placeholder: '请上传弹窗背景图片',
-      scenario: 'shared',
-      multiple: false,
-      fileType: 'image',
     },
   },
   {

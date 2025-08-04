@@ -50,6 +50,8 @@
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vue": "catalog:",
+    "@tinymce/tinymce-vue": "catalog:",
+    "tinymce": "catalog:",
     "vue-router": "catalog:"
   }
 }
