@@ -11,6 +11,7 @@ declare module 'vue' {
     AButton: typeof import('ant-design-vue/es')['Button']
     ADivider: typeof import('ant-design-vue/es')['Divider']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
+    AProgress: typeof import('ant-design-vue/es')['Progress']
     ATable: typeof import('ant-design-vue/es')['Table']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     EsEditor: typeof import('./src/components/es-editor/es-editor.vue')['default']

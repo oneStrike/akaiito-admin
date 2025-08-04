@@ -123,8 +123,7 @@ export const formSchema: EsFormSchema = [
     fieldName: 'popupBackgroundImage',
     component: 'Upload',
     label: '弹窗背景',
-    componentProps: {
-    },
+    componentProps: {},
   },
   {
     label: '通知时间',
@@ -171,13 +170,13 @@ export const formSchema: EsFormSchema = [
       ],
     },
   },
-  {
-    label: '内容',
-    fieldName: 'content',
-    component: 'RichText',
-    rules: 'required',
-    componentProps: {
-      placeholder: '请输入内容...',
-    },
-  },
+  // {
+  //   label: '内容',
+  //   fieldName: 'content',
+  //   component: 'RichText',
+  //   rules: 'required',
+  //   componentProps: {
+  //     placeholder: '请输入内容...',
+  //   },
+  // },
 ];

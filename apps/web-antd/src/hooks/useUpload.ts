@@ -6,7 +6,6 @@ import { message } from 'ant-design-vue';
 
 import { requestClient } from '#/utils/request';
 
-type files = Blob | string;
 type UploadFileRes = UploadFileResponse;
 const api = {
   common: '/api/admin/upload/upload-file',
@@ -14,10 +13,14 @@ const api = {
 };
 
 export async function useUpload(
-  files: files | files[] | UploadFile,
+  files: UploadFile | UploadFile[],
   params: Record<string, any> = {},
   contentType: keyof typeof api = 'common',
-  showMessage: boolean = true,
+  onProgress?: (progressEvent: {
+    loaded: number;
+    percent: number;
+    total: number;
+  }) => void,
 ): Promise<{
   error: any[];
   success: UploadFileRes[];
@@ -29,10 +32,7 @@ export async function useUpload(
 
     // 将所有文件添加到 FormData
     target.forEach((item, index) => {
-      const file = item instanceof File ? item : (item as UploadFile).originFileObj || (item as UploadFile).file;
-      if (file) {
-        formData.append(`files[${index}]`, file);
-      }
+      formData.append(`files[${index}]`, item as unknown as File);
     });
 
     // 添加额外参数
@@ -45,13 +45,23 @@ export async function useUpload(
         headers: {
           'Content-Type': 'multipart/form-data;charset=UTF-8',
         },
+        onUploadProgress: (progressEvent) => {
+          if (onProgress && progressEvent.total) {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total,
+            );
+            onProgress({
+              percent,
+              loaded: progressEvent.loaded,
+              total: progressEvent.total,
+            });
+          }
+        },
       })
       .then((res) => {
         const result = res as any;
-        if (showMessage) {
-          message.success('上传成功');
-        }
-        
+        message.success('上传成功');
+
         // 确保返回数组格式
         const successData = Array.isArray(result) ? result : [result];
         resolve({
@@ -59,10 +69,8 @@ export async function useUpload(
           error: errorFile,
         });
       })
-      .catch((error) => {
-        if (showMessage) {
-          message.error('上传失败');
-        }
+      .catch(() => {
+        message.error('上传失败');
         resolve({
           success: [],
           error: target,

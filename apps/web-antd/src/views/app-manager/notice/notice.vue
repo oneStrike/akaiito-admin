@@ -11,11 +11,15 @@ const [ModalForm, modalApi] = useVbenModal({
 function openModal() {
   modalApi.open();
 }
+
+async function handleSubmit(values: any) {
+  console.error(values);
+}
 </script>
 
 <template>
   <Page>
-    <ModalForm :schema="formSchema" />
+    <ModalForm :schema="formSchema" :on-submit="handleSubmit" />
     <VbenButton @click="openModal">Open</VbenButton>
   </Page>
 </template>

@@ -21,14 +21,12 @@ export interface EsUploadProps {
   batchUpload?: boolean;
   /** 批量上传时每批次的文件数量限制 */
   batchSize?: number;
-  /** 批量上传间隔时间（毫秒） */
-  batchInterval?: number;
-  /** 是否显示批量操作按钮 */
-  showBatchActions?: boolean;
   /** 是否自动上传（false时需要手动触发上传） */
   autoUpload?: boolean;
-  /** 双向绑定的文件地址列表 */
-  modelValue?: string[];
+  /** 是否显示上传进度 */
+  showProgress?: boolean;
+  /** 进度条样式 */
+  progressProps?: Record<string, any>;
 }
 
 export interface BatchUploadStatus {
