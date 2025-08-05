@@ -6,8 +6,10 @@ import type { EsUploadProps } from '#/components/es-upload/types';
 import { UploadLoop } from '@vben/icons';
 
 import { message } from 'ant-design-vue';
+import { cloneDeep, random, uniqueId } from 'lodash-es';
 
 import { useUpload } from '#/hooks/useUpload';
+import { safeParseJson } from '#/utils/parseJson';
 
 // 移除message导入，使用useUpload中的消息提示
 
@@ -29,9 +31,56 @@ const props = withDefaults(defineProps<EsUploadProps>(), {
   modelValue: () => [],
 });
 
-const fileList = defineModel<Required<UploadFile>[]>({
-  default: () => [],
-});
+const emit = defineEmits<{
+  (e: 'update:modelValue', val: EsUploadProps['modelValue']): void;
+}>();
+
+const fileList = ref<UploadFile[]>([]);
+let fileListDataType: 'array' | 'json' | 'url' = 'url';
+
+function formatFileList(files: EsUploadProps['modelValue']) {
+  if (Array.isArray(files)) {
+    fileListDataType = 'array';
+    files.forEach((file) => {
+      if (typeof file === 'string') {
+        formatFileList(file);
+      } else {
+        fileList.value.push({
+          uid: `${uniqueId()}_${random(1000, 9999)}`,
+          size: file.fileSize,
+          name: file.originalName,
+          url: file.filePath,
+          status: 'done',
+          response: cloneDeep(file),
+        });
+      }
+    });
+  } else {
+    const json = safeParseJson(files);
+    if (json) {
+      formatFileList(json);
+    } else {
+      const fileName = files.split('/').pop();
+      fileList.value.push({
+        uid: `${uniqueId()}_${random(1000, 9999)}`,
+        size: 0,
+        name: fileName ?? '',
+        url: files,
+        status: 'done',
+        response: { filePath: files },
+      });
+    }
+  }
+}
+
+const modelValueWatch = watch(
+  () => props.modelValue,
+  (val) => {
+    fileList.value = [];
+    formatFileList(val);
+  },
+  { immediate: true, deep: true },
+);
 
 function beforeUpload(file: UploadFile) {
   if ((file?.size ?? Number.MAX_VALUE) > props.maxSize) {
@@ -45,6 +94,23 @@ function beforeUpload(file: UploadFile) {
   return true;
 }
 
+function handlerModalValue() {
+  if (!Array.isArray(fileList.value) || fileList.value.length === 0) {
+    emit('update:modelValue', []);
+    return;
+  }
+
+  let data;
+  if (fileListDataType === 'url') {
+    data = fileList.value[0]?.response?.filePath;
+  } else if (fileListDataType === 'array') {
+    data = fileList.value.map((item) => item.response?.filePath);
+  } else {
+    data = JSON.stringify(fileList.value.map((item) => item.response));
+  }
+
+  emit('update:modelValue', data);
+}
 async function customRequest(params: Record<string, any>) {
   params.onProgress({ percent: 0 });
 
@@ -59,7 +125,14 @@ async function customRequest(params: Record<string, any>) {
       });
     },
   );
-  params.onError();
+  if (error?.length) {
+    message.error(error[0].message);
+    return;
+  }
+  params.onSuccess(success[0]);
+  modelValueWatch.pause();
+  handlerModalValue();
+  modelValueWatch.resume();
 }
 </script>
 

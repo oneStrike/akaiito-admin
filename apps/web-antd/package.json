@@ -52,6 +52,7 @@
     "vue": "catalog:",
     "@tinymce/tinymce-vue": "catalog:",
     "tinymce": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "lodash-es": "catalog:"
   }
 }

@@ -1,6 +1,10 @@
 import type { UploadListType } from 'ant-design-vue/es/upload/interface';
 
+import type { UploadFileResponse } from '#/apis/types/upload';
+
 export interface EsUploadProps {
+  /** 上传地址 */
+  modelValue: string | string[] | UploadFileResponse;
   /** 允许上传的文件类型 */
   accept?: string;
   /** 上传时附带的额外参数 */
