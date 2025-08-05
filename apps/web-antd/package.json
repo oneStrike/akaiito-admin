@@ -27,6 +27,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@tinymce/tinymce-vue": "catalog:",
     "@types/node-forge": "catalog:",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
@@ -45,14 +46,13 @@
     "@vueuse/core": "catalog:",
     "ant-design-vue": "catalog:",
     "dayjs": "catalog:",
+    "lodash-es": "catalog:",
     "node-forge": "catalog:",
     "pinia": "catalog:",
+    "tinymce": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vue": "catalog:",
-    "@tinymce/tinymce-vue": "catalog:",
-    "tinymce": "catalog:",
-    "vue-router": "catalog:",
-    "lodash-es": "catalog:"
+    "vue-router": "catalog:"
   }
 }

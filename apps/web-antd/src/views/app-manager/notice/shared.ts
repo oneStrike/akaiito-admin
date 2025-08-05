@@ -170,13 +170,32 @@ export const formSchema: EsFormSchema = [
       ],
     },
   },
-  // {
-  //   label: '内容',
-  //   fieldName: 'content',
-  //   component: 'RichText',
-  //   rules: 'required',
-  //   componentProps: {
-  //     placeholder: '请输入内容...',
-  //   },
-  // },
+  {
+    label: '内容',
+    fieldName: 'content',
+    component: 'RichText',
+    rules: 'required',
+    componentProps: {
+      placeholder: '请输入内容...',
+    },
+  },
+];
+
+export const noticeColumns = [
+  {
+    title: '通知标题',
+    dataIndex: 'title',
+    key: 'title',
+  },
+  {
+    title: '通知类型',
+    dataIndex: 'noticeType',
+    key: 'noticeType',
+    customRender: ({ record }) => {
+      const noticeType = noticeType.find(
+        (item) => item.value === record.noticeType,
+      );
+      return noticeType?.label || '未知';
+    },
+  },
 ];

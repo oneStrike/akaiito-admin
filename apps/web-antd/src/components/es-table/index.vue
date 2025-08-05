@@ -12,6 +12,9 @@ const props = withDefaults(defineProps<EsTableProps>(), {
   size: 'middle',
   showPagination: true,
   bordered: false,
+  scroll: () => ({
+    y: '100%',
+  }),
 });
 
 const emit = defineEmits<EsTableEmits>();
@@ -34,7 +37,7 @@ const paginationConfig = computed(() => {
     showQuickJumper: true,
     showTotal: (total: number, range: [number, number]) =>
       `第 ${range[0]}-${range[1]} 条/共 ${total} 条`,
-    pageSizeOptions: ['10', '20', '50', '100'],
+    pageSizeOptions: ['15', '30', '50', '100'],
   };
 
   return typeof props.pagination === 'object'
@@ -93,7 +96,7 @@ defineExpose<EsTableInstance>({
 </script>
 
 <template>
-  <div class="es-table">
+  <div class="es-table h-full">
     <a-table
       ref="tableRef"
       v-bind="$attrs"

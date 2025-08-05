@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { Page, useVbenModal, VbenButton } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import EsModalForm from '#/components/es-modal-form/index.vue';
-import { formSchema } from '#/views/app-manager/notice/shared';
+import { formSchema, noticeColumns } from '#/views/app-manager/notice/shared';
 
 const [ModalForm, modalApi] = useVbenModal({
   connectedComponent: EsModalForm,
@@ -18,8 +18,9 @@ async function handleSubmit(values: any) {
 </script>
 
 <template>
-  <Page>
+  <Page auto-content-height>
+    <EsTable :columns="noticeColumns" />
+
     <ModalForm :schema="formSchema" :on-submit="handleSubmit" />
-    <VbenButton @click="openModal">Open</VbenButton>
   </Page>
 </template>

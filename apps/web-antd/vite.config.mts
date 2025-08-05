@@ -14,6 +14,8 @@ export default defineConfig(async () => {
           resolvers: [AntDesignVueResolver()],
         }),
         Components({
+          dirs: ['src/components'],
+          directoryAsNamespace: false,
           resolvers: [
             AntDesignVueResolver({
               importStyle: false,
