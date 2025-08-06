@@ -1,5 +1,7 @@
 import type { EsFormSchema } from '#/global';
 
+import { formSchemaTransform } from '#/utils/formSchemaTransform';
+
 export const noticeType = [
   {
     label: '系统通知',
@@ -108,18 +110,6 @@ export const formSchema: EsFormSchema = [
     },
   },
   {
-    label: '排序权重',
-
-    fieldName: 'order',
-    component: 'InputNumber',
-    componentProps: {
-      placeholder: '请输入排序权重',
-      min: 0,
-      max: 99_999_999,
-      class: 'w-full',
-    },
-  },
-  {
     fieldName: 'popupBackgroundImage',
     component: 'Upload',
     label: '弹窗背景',
@@ -181,21 +171,44 @@ export const formSchema: EsFormSchema = [
   },
 ];
 
-export const noticeColumns = [
-  {
-    title: '通知标题',
-    dataIndex: 'title',
-    key: 'title',
+export const noticeColumns = formSchemaTransform.columns(formSchema, {
+  content: {
+    hide: true,
   },
-  {
-    title: '通知类型',
-    dataIndex: 'noticeType',
-    key: 'noticeType',
-    customRender: ({ record }) => {
-      const noticeType = noticeType.find(
-        (item) => item.value === record.noticeType,
-      );
-      return noticeType?.label || '未知';
-    },
+  showAsPopup: {
+    hide: true,
   },
-];
+  isPinned: {
+    hide: true,
+  },
+  popupBackgroundImage: {
+    hide: true,
+  },
+  actions: {
+    show: true,
+  },
+  dateTimeRange: {
+    sort: 99,
+  },
+});
+
+export const noticeFilter = formSchemaTransform.filter(formSchema, {
+  content: {
+    hide: true,
+  },
+  showAsPopup: {
+    hide: true,
+  },
+  isPinned: {
+    hide: true,
+  },
+  popupBackgroundImage: {
+    hide: true,
+  },
+  actions: {
+    show: true,
+  },
+  dateTimeRange: {
+    sort: 99,
+  },
+});

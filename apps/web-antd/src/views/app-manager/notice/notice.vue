@@ -1,8 +1,13 @@
 <script lang="ts" setup>
 import { Page, useVbenModal } from '@vben/common-ui';
 
+import { noticePageApi } from '#/apis';
 import EsModalForm from '#/components/es-modal-form/index.vue';
-import { formSchema, noticeColumns } from '#/views/app-manager/notice/shared';
+import {
+  formSchema,
+  noticeColumns,
+  noticeFilter,
+} from '#/views/app-manager/notice/shared';
 
 const [ModalForm, modalApi] = useVbenModal({
   connectedComponent: EsModalForm,
@@ -19,8 +24,14 @@ async function handleSubmit(values: any) {
 
 <template>
   <Page auto-content-height>
-    <EsTable :columns="noticeColumns" />
+    <div class="h-full rounded-lg bg-white p-4">
+      <EsTable
+        :columns="noticeColumns"
+        :request-api="noticePageApi"
+        :filter-schema="noticeFilter"
+      />
 
-    <ModalForm :schema="formSchema" :on-submit="handleSubmit" />
+      <ModalForm :schema="formSchema" :on-submit="handleSubmit" />
+    </div>
   </Page>
 </template>

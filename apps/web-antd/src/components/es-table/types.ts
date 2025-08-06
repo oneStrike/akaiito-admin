@@ -1,5 +1,7 @@
 import type { TableColumnsType, TableProps } from 'ant-design-vue';
 
+import type { EsFormSchema } from '#/global';
+
 export interface EsTableColumn {
   /** 列标题 */
   title: string;
@@ -30,6 +32,10 @@ export interface EsTableProps {
   columns: EsTableColumn[] | TableColumnsType;
   /** 表格数据 */
   dataSource?: any[];
+  /** 请求API函数，用于内部处理数据请求 */
+  requestApi?: EsTableRequestApi<any>;
+  /** 请求API函数，用于内部处理数据请求 */
+  filterSchema?: Partial<EsFormSchema>;
   /** 加载状态 */
   loading?: boolean;
   /** 行键 */
@@ -55,6 +61,56 @@ export interface EsTableEmits {
   selectChange: [selectedRowKeys: any[], selectedRows: any[]];
 }
 
+/** EsTable 请求参数接口 */
+export interface EsTableRequestParams {
+  /** 页码索引（从 0 开始） */
+  pageIndex?: number;
+  /** 每页条数 */
+  pageSize?: number;
+  /** 排序字段 */
+  sortField?: string;
+  /** 排序方式 */
+  sortOrder?: 'ascend' | 'descend';
+  /** 筛选条件 */
+  filters?: Record<string, any>;
+  /** 排序配置 */
+  orderBy?: string;
+  /** 是否置顶 */
+  isPinned?: boolean;
+  /** 是否发布 */
+  isPublished?: boolean;
+  /** 通知类型 */
+  noticeType?: string;
+  /** 优先级 */
+  priorityLevel?: number;
+  /** 是否显示为弹窗 */
+  showAsPopup?: boolean;
+  /** 标题 */
+  title?: string;
+}
+
+/** EsTable 响应数据接口 */
+export interface EsTableRequestResponse {
+  /** 数据列表 */
+  list?: any[];
+  /** 数据列表（备用字段） */
+  data?: any[];
+  /** 总数 */
+  total?: number;
+  /** 页码索引（从 0 开始） */
+  pageIndex?: number;
+  /** 每页条数 */
+  pageSize?: number;
+  /** 请求是否成功 */
+  success?: boolean;
+}
+
+/** EsTable 请求API函数类型 */
+export type EsTableRequestApi<
+  T = EsTableRequestParams,
+  R = EsTableRequestResponse,
+> = (params: T) => Promise<R>;
+
 export interface EsTableInstance {
   /** 获取选中的行键 */
   getSelectedRowKeys: () => any[];
@@ -64,4 +120,8 @@ export interface EsTableInstance {
   clearSelection: () => void;
   /** 设置选中的行 */
   setSelectedRowKeys: (keys: any[]) => void;
+  /** 刷新数据 */
+  refresh: (resetPage?: boolean) => void;
+  /** 设置查询参数 */
+  setSearchParams: (params: any) => void;
 }
