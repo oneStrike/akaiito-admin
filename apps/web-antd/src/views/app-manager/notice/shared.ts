@@ -192,7 +192,7 @@ export const noticeColumns = formSchemaTransform.columns(formSchema, {
   },
 });
 
-export const noticeFilter = formSchemaTransform.filter(formSchema, {
+export const noticeFilter = formSchemaTransform.sift(formSchema, {
   content: {
     hide: true,
   },

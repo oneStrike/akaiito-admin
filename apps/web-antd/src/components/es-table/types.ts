@@ -34,8 +34,8 @@ export interface EsTableProps {
   dataSource?: any[];
   /** 请求API函数，用于内部处理数据请求 */
   requestApi?: EsTableRequestApi<any>;
-  /** 请求API函数，用于内部处理数据请求 */
-  filterSchema?: Partial<EsFormSchema>;
+  /** 筛选表单 */
+  filterSchema?: EsFormSchema;
   /** 加载状态 */
   loading?: boolean;
   /** 行键 */
@@ -124,4 +124,10 @@ export interface EsTableInstance {
   refresh: (resetPage?: boolean) => void;
   /** 设置查询参数 */
   setSearchParams: (params: any) => void;
+  /** 获取表单数据 */
+  getFormValues: () => Record<string, any>;
+  /** 设置表单数据 */
+  setFormValues: (values: Record<string, any>) => void;
+  /** 重置表单 */
+  resetForm: () => void;
 }

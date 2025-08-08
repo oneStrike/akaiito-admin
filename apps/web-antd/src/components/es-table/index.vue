@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<EsTableProps>(), {
 const emit = defineEmits<EsTableEmits>();
 
 const tableRef = ref();
+const tableContainerRef = ref();
 const selectedRowKeys = ref<any[]>([]);
 const selectedRows = ref<any[]>([]);
 
@@ -29,7 +30,7 @@ const selectedRows = ref<any[]>([]);
 const internalDataSource = ref<any[]>([]);
 const internalLoading = ref(false);
 const pagination = ref({
-  current: 1,
+  pageIndex: 1,
   pageSize: 15,
   total: 0,
 });
@@ -53,7 +54,7 @@ const paginationConfig = computed(() => {
   }
 
   const defaultPagination = {
-    current: pagination.value.current,
+    current: pagination.value.pageIndex,
     pageSize: pagination.value.pageSize,
     total: pagination.value.total,
     showSizeChanger: true,
@@ -97,7 +98,7 @@ const fetchData = async (params: any = {}) => {
 
     // 构建请求参数，pageIndex 从 0 开始
     const requestData = {
-      pageIndex: pagination.value.current - 1, // 转换为从 0 开始
+      pageIndex: pagination.value.pageIndex - 1, // 转换为从 0 开始
       pageSize: pagination.value.pageSize,
       ...requestParams.value,
       ...params,
@@ -110,8 +111,8 @@ const fetchData = async (params: any = {}) => {
       internalDataSource.value = response.list || response.data || [];
       pagination.value.total = response.total || 0;
       // pageIndex 从 0 开始，需要转换为 current（从 1 开始）
-      pagination.value.current =
-        (response.pageIndex ?? pagination.value.current - 1) + 1;
+      pagination.value.pageIndex =
+        (response.pageIndex ?? pagination.value.pageIndex - 1) + 1;
       pagination.value.pageSize =
         response.pageSize || pagination.value.pageSize;
     }
@@ -134,7 +135,7 @@ const handleTableChange = (
   // 如果使用 requestApi，处理内部状态
   if (props.requestApi) {
     // 更新分页信息
-    pagination.value.current = paginationInfo.current;
+    pagination.value.pageIndex = paginationInfo.current;
     pagination.value.pageSize = paginationInfo.pageSize;
 
     // 构建请求参数
@@ -179,7 +180,7 @@ const setSelectedRowKeys = (keys: any[]) => {
 // 刷新数据
 const refresh = (resetPage = false) => {
   if (resetPage) {
-    pagination.value.current = 1;
+    pagination.value.pageIndex = 1;
   }
   fetchData();
 };
@@ -187,8 +188,34 @@ const refresh = (resetPage = false) => {
 // 设置查询参数
 const setSearchParams = (params: any) => {
   requestParams.value = { ...requestParams.value, ...params };
-  pagination.value.current = 1; // 重置到第一页
+  pagination.value.pageIndex = 1; // 重置到第一页
   fetchData();
+};
+
+// 获取表单数据
+const getFormValues = () => {
+  if (formApi) {
+    return formApi.getValues();
+  }
+  return {};
+};
+
+// 设置表单数据
+const setFormValues = (values: Record<string, any>) => {
+  if (formApi) {
+    formApi.setValues(values);
+  }
+};
+
+// 重置表单
+const resetForm = () => {
+  if (formApi) {
+    formApi.resetForm();
+    // 重置表单后，清空查询参数并重新获取数据
+    requestParams.value = {};
+    pagination.value.pageIndex = 1;
+    fetchData();
+  }
 };
 
 // 组件挂载时初始化数据
@@ -198,11 +225,32 @@ onMounted(() => {
   }
 });
 
-const [BaseForm, formApi] = useVbenForm({
-  wrapperClass: 'grid-cols-2 md:grid-cols-3',
-  schema: props.filterSchema ?? [],
-  showCollapseButton: true,
+// 计算是否显示表单
+const showForm = computed(() => {
+  return props.filterSchema && props.filterSchema.length > 0;
 });
+
+// 只有当 filterSchema 有值时才调用，避免不必要的钩子调用
+let BaseForm: null | ReturnType<typeof useVbenForm>[0] = null;
+let formApi: null | ReturnType<typeof useVbenForm>[1] = null;
+
+if (props.filterSchema && props.filterSchema.length > 0) {
+  const [form, api] = useVbenForm({
+    wrapperClass:
+      'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
+    schema: props.filterSchema,
+    compact: true,
+    showCollapseButton: true,
+    submitOnChange: true,
+    collapsed: true,
+    /*  */ // 表单值变化时的回调
+    handleSubmit: (values: Record<string, any>) => {
+      setSearchParams(values);
+    },
+  });
+  BaseForm = form;
+  formApi = api;
+}
 
 // 暴露给父组件的实例方法
 defineExpose<EsTableInstance>({
@@ -212,30 +260,35 @@ defineExpose<EsTableInstance>({
   setSelectedRowKeys,
   refresh,
   setSearchParams,
+  getFormValues,
+  setFormValues,
+  resetForm,
 });
 </script>
 
 <template>
   <div class="es-table">
-    <BaseForm show-collapse-button />
-    <a-table
-      ref="tableRef"
-      v-bind="$attrs"
-      :columns="columns"
-      :data-source="computedDataSource"
-      :loading="computedLoading"
-      :pagination="paginationConfig"
-      :row-key="rowKey"
-      :scroll="scroll"
-      :size="size"
-      :bordered="bordered"
-      :row-selection="rowSelectionConfig"
-      @change="handleTableChange"
-    >
-      <!-- 透传所有插槽 -->
-      <template v-for="(_, name) in $slots" #[name]="slotData">
-        <slot :name="name" v-bind="slotData"></slot>
-      </template>
-    </a-table>
+    <BaseForm v-if="showForm" />
+    <div ref="tableContainerRef">
+      <a-table
+        ref="tableRef"
+        v-bind="$attrs"
+        :columns="columns"
+        :data-source="computedDataSource"
+        :loading="computedLoading"
+        :pagination="paginationConfig"
+        :row-key="rowKey"
+        :size="size"
+        :bordered="bordered"
+        :row-selection="rowSelectionConfig"
+        class="h-full"
+        @change="handleTableChange"
+      >
+        <!-- 透传所有插槽 -->
+        <template v-for="(_, name) in $slots" #[name]="slotData">
+          <slot :name="name" v-bind="slotData"></slot>
+        </template>
+      </a-table>
+    </div>
   </div>
 </template>
