@@ -15,4 +15,3 @@ export const MdiQqchat = createIconifyIcon('mdi:qqchat');
 export const RiDingding = createIconifyIcon('ri:dingding-fill');
 
 export const UploadLoop = createIconifyIcon('line-md:uploading-loop');
-

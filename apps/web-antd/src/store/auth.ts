@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const loginLoading = ref(false);
   const publicKey = ref('');
+  const refreshToken = ref('');
 
   /**
    * 异步处理登录操作
@@ -37,8 +38,9 @@ export const useAuthStore = defineStore('auth', () => {
       const { tokens } = await userLoginApi(params);
 
       // 如果成功获取到 accessToken
-      if (tokens.accessToken) {
+      if (tokens.accessToken && tokens.refreshToken) {
         accessStore.setAccessToken(tokens.accessToken);
+        accessStore.setRefreshToken(tokens.refreshToken);
 
         // 获取用户信息并存储到 accessStore 中
         userInfo = await fetchUserInfo();
@@ -132,5 +134,6 @@ export const useAuthStore = defineStore('auth', () => {
     loginLoading,
     logout,
     getRsaPublicKey,
+    refreshToken,
   };
 });
