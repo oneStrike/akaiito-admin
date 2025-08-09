@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { useUpload } from '@/hooks/useUpload';
+import type { EsEditorProps } from './types';
+
 import Editor from '@tinymce/tinymce-vue';
 import tinymce from 'tinymce/tinymce';
+
+import { useUpload } from '#/hooks/useUpload';
 
 import 'tinymce/icons/default/icons';
 import 'tinymce/models/dom'; // 一定要引入
@@ -32,16 +35,6 @@ import 'tinymce/plugins/accordion'; // 可折叠数据手风琴模式
 import 'tinymce/plugins/anchor'; // 锚点
 import 'tinymce/plugins/fullscreen';
 
-export interface EsEditorProps {
-  placeholder?: string;
-  enabled?: boolean;
-  height?: number;
-  readonly?: boolean;
-  editableRoot?: boolean;
-  plugins?: string | string[];
-  toolbar?: boolean | string | string[];
-}
-
 const props = withDefaults(defineProps<EsEditorProps>(), {
   placeholder: '请输入内容...',
   enabled: true,
@@ -54,8 +47,6 @@ const props = withDefaults(defineProps<EsEditorProps>(), {
     'undo redo | accordion accordionremove | blocks fontfamily fontsize| bold italic underline strikethrough ltr rtl  | align numlist bullist | link image | table | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | anchor codesample',
 });
 
-const emits = defineEmits(['update:modelValue', 'setHtml']);
-const loading = ref(false);
 const tinymceId = ref(
   `vue-tinymce-${Date.now()}${(Math.random() * 1000).toFixed(0)}`,
 );
@@ -67,10 +58,11 @@ const init = reactive({
   language_url: '/public/libs/tinymce/langs/zh_CN.js', // 语言包的路径，具体路径看自己的项目
   language: 'zh_CN',
   skin_url: '/public/libs/tinymce/skins/ui/oxide', // skin路径，具体路径看自己的项目
-  editable_root: props.editable_root,
+  editable_root: props.editableRoot,
   height: 600,
-  branding: false, // 是否禁用“Powered by TinyMCE”
+  branding: false, // 是否禁用"Powered by TinyMCE"
   promotion: false, // 去掉 upgrade
+  license_key: 'gpl', // 使用 GPL 许可证密钥，避免许可证管理器加载错误
   // toolbar_sticky: true,
   // toolbar_sticky_offset: 100,
   menubar: 'edit view insert format tools table',

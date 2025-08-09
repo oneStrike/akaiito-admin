@@ -1,21 +1,56 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { NoticePageResponseDto } from '#/apis/types/notice';
+import type {
+  NoticeDetailResponse,
+  NoticePageResponseDto,
+} from '#/apis/types/notice';
 
-import { Page } from '@vben/common-ui';
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { noticePageApi } from '#/apis';
+import { clientPagePageApi, noticeDetailApi, noticePageApi } from '#/apis';
+import EsModalForm from '#/components/es-modal-form/index.vue';
 import { useBitMask } from '#/hooks/useBitmask';
 import { createSearchFormOptions } from '#/utils/grid-form-config';
 
 import {
   enablePlatform,
+  formSchema,
   noticeColumns,
   noticeFilter,
   noticePriorityObj,
   noticeTypeObj,
 } from './shared';
+
+const currentRecord = ref<NoticeDetailResponse>();
+const clientPageObj = ref<Record<string, string>>({});
+
+clientPagePageApi({
+  pageSize: 500,
+}).then((res) => {
+  const pageOptions =
+    res.list?.map((pageItem) => {
+      clientPageObj.value[pageItem.pageCode] = pageItem.pageName;
+      return {
+        label: pageItem.pageName,
+        value: pageItem.pageCode, // 使用 pageCode 作为 value
+        ...pageItem,
+      };
+    }) || [];
+
+  noticeFilter.forEach((item) => {
+    if (item.fieldName === 'pageCode' && item.componentProps) {
+      (item.componentProps as any).options = pageOptions;
+    }
+  });
+  formSchema.forEach((item) => {
+    if (item.fieldName === 'pageCode' && item.componentProps) {
+      (item.componentProps as any).options = pageOptions;
+    }
+  });
+
+  gridApi.formApi.updateSchema(noticeFilter);
+});
 
 const gridOptions: VxeGridProps<NoticePageResponseDto> = {
   checkboxConfig: {
@@ -28,37 +63,52 @@ const gridOptions: VxeGridProps<NoticePageResponseDto> = {
   keepSource: true,
   proxyConfig: {
     ajax: {
-      query: async ({ page }) => {
+      query: async ({ page }, formValues) => {
         return await noticePageApi({
           pageIndex: --page.currentPage,
           pageSize: page.pageSize,
+          ...formValues,
         });
       },
     },
     sort: true,
   },
-  sortConfig: {
-    defaultSort: { field: 'category', order: 'desc' },
-    remote: true,
-  },
+
   toolbarConfig: {
     custom: true,
     export: true,
-    // import: true,
     refresh: true,
     zoom: true,
   },
 };
 
-const [Grid] = useVbenVxeGrid({
+const [Form, formApi] = useVbenModal({
+  connectedComponent: EsModalForm,
+  destroyOnClose: true,
+});
+
+const [Grid, gridApi] = useVbenVxeGrid({
   formOptions: createSearchFormOptions(noticeFilter),
   gridOptions,
 });
+
+async function openFormModal(row?: NoticePageResponseDto) {
+  let record;
+  if (row) {
+    record = await noticeDetailApi({ id: row.id });
+  }
+  formApi.setData({ title: '通知公告', record }).open();
+}
 </script>
 
 <template>
   <Page auto-content-height>
     <Grid>
+      <template #toolbar-actions>
+        <a-button class="ml-2" type="primary" @click="openFormModal()">
+          添加
+        </a-button>
+      </template>
       <template #noticeType="{ row }">
         <a-typography-text
           :style="{ color: noticeTypeObj[row.noticeType]?.color }"
@@ -73,6 +123,11 @@ const [Grid] = useVbenVxeGrid({
           {{ noticePriorityObj[row.priorityLevel]?.label }}
         </a-typography-text>
       </template>
+      <template #pageCode="{ row }">
+        <a-typography-text>
+          {{ row.pageCode ? clientPageObj[row.pageCode] : '-' }}
+        </a-typography-text>
+      </template>
       <template #enablePlatform="{ row }">
         <a-typography-text>
           {{
@@ -80,6 +135,11 @@ const [Grid] = useVbenVxeGrid({
           }}
         </a-typography-text>
       </template>
+      <template #actions="{ row }">
+        <a-button @click="openFormModal(row)">编辑</a-button>
+      </template>
     </Grid>
+
+    <Form :record="currentRecord" :schema="formSchema" />
   </Page>
 </template>

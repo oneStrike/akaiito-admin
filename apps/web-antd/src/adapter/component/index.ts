@@ -60,6 +60,7 @@ const TreeSelect = defineAsyncComponent(
   () => import('ant-design-vue/es/tree-select'),
 );
 const Upload = defineAsyncComponent(() => import('#/components/es-upload'));
+const RichText = defineAsyncComponent(() => import('#/components/es-editor'));
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
@@ -115,6 +116,7 @@ export type ComponentType =
   | 'RadioGroup'
   | 'RangePicker'
   | 'Rate'
+  | 'RichText'
   | 'Select'
   | 'Space'
   | 'Switch'
@@ -190,6 +192,7 @@ async function initComponentAdapter() {
     TimePicker,
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
+    RichText,
   };
 
   // 将组件注册到全局共享状态中

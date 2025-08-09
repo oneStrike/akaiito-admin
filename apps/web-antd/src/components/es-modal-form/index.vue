@@ -13,21 +13,34 @@ const props = withDefaults(defineProps<EsModalFormProps>(), {
   record: () => ({}),
 });
 
+const sharedData = ref<Partial<EsModalFormProps>>({
+  title: '',
+});
+
 const modalTitle = computed(() => {
   return Object.keys(props.record).length > 0
-    ? `编辑${props.title ?? ''}`
-    : `新增${props.title ?? ''}`;
+    ? `编辑${sharedData.value?.title ?? ''}`
+    : `新增${sharedData.value?.title ?? ''}`;
 });
 
 const [Modal, modalApi] = useVbenModal({
   draggable: true,
   animationType: 'scale',
   onConfirm: () => formApi.submitForm(),
+  onOpenChange(isOpen: boolean) {
+    if (isOpen) {
+      sharedData.value = modalApi.getData<EsModalFormProps>();
+      if (sharedData.value?.record) {
+        formApi.setValues(sharedData.value.record);
+      }
+    }
+  },
 });
 
 const [BaseForm, formApi] = useVbenForm({
+  layout: 'vertical',
   showDefaultActions: false,
-  wrapperClass: 'grid-cols-1 md:grid-cols-2',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-4',
   handleSubmit: async (values) => {
     modalApi.lock();
     await props.onSubmit?.(values);

@@ -1,6 +1,8 @@
 import type { VxeGridPropTypes } from '#/adapter/vxe-table';
 import type { EsFormSchema } from '#/global';
 
+import { cloneDeep } from 'lodash-es';
+
 type ColumnItemExtra<T> = Partial<
   Record<
     EsFormSchema[number]['fieldName'],
@@ -65,6 +67,8 @@ function sortItemsWithSortValue<
 
 export const formSchemaTransform: FormSchemaTransform = {
   toTableColumns: (schema, extra) => {
+    const innerSchema = cloneDeep(schema);
+
     const columnsWithSort: Array<
       VxeGridPropTypes.Columns<any>[number] & {
         originalIndex: number;
@@ -72,7 +76,7 @@ export const formSchemaTransform: FormSchemaTransform = {
       }
     > = [];
 
-    for (const [i, item] of schema.entries()) {
+    for (const [i, item] of innerSchema.entries()) {
       const itemExtra = extra?.[item.fieldName];
 
       if (!itemExtra?.hide) {
@@ -97,6 +101,7 @@ export const formSchemaTransform: FormSchemaTransform = {
         width: 100,
         fixed: 'right',
         originalIndex: -1,
+        slots: { default: 'actions' },
         ...extra?.actions,
       });
     }
@@ -112,12 +117,13 @@ export const formSchemaTransform: FormSchemaTransform = {
     return columnsWithSort;
   },
   toSearchSchema: (schema, extra) => {
+    const innerSchema = cloneDeep(schema);
     const filterListWithSort: Array<
       EsFormSchema[number] & { originalIndex: number; sortValue?: number }
     > = [];
 
     // 先过滤出需要的项目并添加排序信息
-    for (const [i, item] of schema.entries()) {
+    for (const [i, item] of innerSchema.entries()) {
       const itemExtra = extra?.[item.fieldName];
 
       if (itemExtra?.hide !== true) {

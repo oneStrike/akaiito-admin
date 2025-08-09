@@ -193,6 +193,7 @@ export const formSchema: EsFormSchema = [
     label: '内容',
     fieldName: 'content',
     component: 'RichText',
+    formItemClass: 'col-span-2',
     rules: 'required',
     componentProps: {
       placeholder: '请输入内容...',
@@ -228,6 +229,9 @@ export const noticeColumns =
     },
     enablePlatform: {
       slots: { default: 'enablePlatform' },
+    },
+    pageCode: {
+      slots: { default: 'pageCode' },
     },
   });
 
