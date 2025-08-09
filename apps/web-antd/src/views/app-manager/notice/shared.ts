@@ -1,3 +1,4 @@
+import type { NoticePageResponseDto } from '#/apis/types/notice';
 import type { EsFormSchema } from '#/global';
 
 import { formSchemaTransform } from '#/utils/formSchemaTransform';
@@ -6,20 +7,33 @@ export const noticeType = [
   {
     label: '系统通知',
     value: 0,
+    color: '#1890ff', // 蓝色
   },
   {
     label: '活动公告',
     value: 1,
+    color: '#52c41a', // 绿色
   },
   {
     label: '维护通知',
     value: 2,
+    color: '#faad14', // 橙色
   },
   {
     label: '更新公告',
     value: 3,
+    color: '#722ed1', // 紫色
   },
 ];
+
+export const noticeTypeObj: Record<number, { color: string; label: string }> =
+  {};
+for (const item of noticeType) {
+  noticeTypeObj[item.value] = {
+    label: item.label,
+    color: item.color,
+  };
+}
 
 export const enablePlatform = [
   {
@@ -40,20 +54,35 @@ export const noticePriority = [
   {
     label: '低优先级',
     value: 0,
+    color: '#52c41a',
   },
   {
     label: '中等优先级',
     value: 1,
+    color: '#1890ff',
   },
   {
     label: '高优先级',
     value: 2,
+    color: '#fa8c16',
   },
   {
     label: '紧急',
     value: 3,
+    color: '#ff4d4f',
   },
 ];
+
+export const noticePriorityObj: Record<
+  number,
+  { color: string; label: string }
+> = {};
+for (const item of noticePriority) {
+  noticePriorityObj[item.value] = {
+    label: item.label,
+    color: item.color,
+  };
+}
 
 export const formSchema: EsFormSchema = [
   {
@@ -171,28 +200,38 @@ export const formSchema: EsFormSchema = [
   },
 ];
 
-export const noticeColumns = formSchemaTransform.columns(formSchema, {
-  content: {
-    hide: true,
-  },
-  showAsPopup: {
-    hide: true,
-  },
-  isPinned: {
-    hide: true,
-  },
-  popupBackgroundImage: {
-    hide: true,
-  },
-  actions: {
-    show: true,
-  },
-  dateTimeRange: {
-    sort: 99,
-  },
-});
+export const noticeColumns =
+  formSchemaTransform.toTableColumns<NoticePageResponseDto>(formSchema, {
+    content: {
+      hide: true,
+    },
+    showAsPopup: {
+      hide: true,
+    },
+    isPinned: {
+      hide: true,
+    },
+    popupBackgroundImage: {
+      hide: true,
+    },
+    actions: {
+      show: true,
+    },
+    dateTimeRange: {
+      sort: 99,
+    },
+    noticeType: {
+      slots: { default: 'noticeType' },
+    },
+    priorityLevel: {
+      slots: { default: 'priorityLevel' },
+    },
+    enablePlatform: {
+      slots: { default: 'enablePlatform' },
+    },
+  });
 
-export const noticeFilter = formSchemaTransform.sift(formSchema, {
+export const noticeFilter = formSchemaTransform.toSearchSchema(formSchema, {
   content: {
     hide: true,
   },
@@ -208,7 +247,7 @@ export const noticeFilter = formSchemaTransform.sift(formSchema, {
   actions: {
     show: true,
   },
-  dateTimeRange: {
+  title: {
     sort: 99,
   },
 });

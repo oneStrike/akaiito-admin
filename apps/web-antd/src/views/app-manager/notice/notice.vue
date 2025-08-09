@@ -1,37 +1,85 @@
 <script lang="ts" setup>
-import { Page, useVbenModal } from '@vben/common-ui';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { NoticePageResponseDto } from '#/apis/types/notice';
 
+import { Page } from '@vben/common-ui';
+
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { noticePageApi } from '#/apis';
-import EsModalForm from '#/components/es-modal-form/index.vue';
+import { useBitMask } from '#/hooks/useBitmask';
+import { createSearchFormOptions } from '#/utils/grid-form-config';
+
 import {
-  formSchema,
+  enablePlatform,
   noticeColumns,
   noticeFilter,
-} from '#/views/app-manager/notice/shared';
+  noticePriorityObj,
+  noticeTypeObj,
+} from './shared';
 
-const [ModalForm, modalApi] = useVbenModal({
-  connectedComponent: EsModalForm,
+const gridOptions: VxeGridProps<NoticePageResponseDto> = {
+  checkboxConfig: {
+    highlight: true,
+    labelField: 'name',
+  },
+  columns: noticeColumns,
+  exportConfig: {},
+  height: 'auto',
+  keepSource: true,
+  proxyConfig: {
+    ajax: {
+      query: async ({ page }) => {
+        return await noticePageApi({
+          pageIndex: --page.currentPage,
+          pageSize: page.pageSize,
+        });
+      },
+    },
+    sort: true,
+  },
+  sortConfig: {
+    defaultSort: { field: 'category', order: 'desc' },
+    remote: true,
+  },
+  toolbarConfig: {
+    custom: true,
+    export: true,
+    // import: true,
+    refresh: true,
+    zoom: true,
+  },
+};
+
+const [Grid] = useVbenVxeGrid({
+  formOptions: createSearchFormOptions(noticeFilter),
+  gridOptions,
 });
-
-function openModal() {
-  modalApi.open();
-}
-
-async function handleSubmit(values: any) {
-  console.error(values);
-}
 </script>
 
 <template>
   <Page auto-content-height>
-    <div class="h-full rounded-lg bg-white p-4">
-      <EsTable
-        :columns="noticeColumns"
-        :request-api="noticePageApi"
-        :filter-schema="noticeFilter"
-      />
-
-      <ModalForm :schema="formSchema" :on-submit="handleSubmit" />
-    </div>
+    <Grid>
+      <template #noticeType="{ row }">
+        <a-typography-text
+          :style="{ color: noticeTypeObj[row.noticeType]?.color }"
+        >
+          {{ noticeTypeObj[row.noticeType]?.label }}
+        </a-typography-text>
+      </template>
+      <template #priorityLevel="{ row }">
+        <a-typography-text
+          :style="{ color: noticePriorityObj[row.priorityLevel]?.color }"
+        >
+          {{ noticePriorityObj[row.priorityLevel]?.label }}
+        </a-typography-text>
+      </template>
+      <template #enablePlatform="{ row }">
+        <a-typography-text>
+          {{
+            useBitMask.getLabels(row.enablePlatform, enablePlatform).join('、')
+          }}
+        </a-typography-text>
+      </template>
+    </Grid>
   </Page>
 </template>

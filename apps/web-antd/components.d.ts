@@ -13,6 +13,7 @@ declare module 'vue' {
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
     AProgress: typeof import('ant-design-vue/es')['Progress']
     ATable: typeof import('ant-design-vue/es')['Table']
+    ATypographyText: typeof import('ant-design-vue/es')['TypographyText']
     AUpload: typeof import('ant-design-vue/es')['Upload']
     EsEditor: typeof import('./src/components/es-editor/es-editor.vue')['default']
     EsModalForm: typeof import('./src/components/es-modal-form/index.vue')['default']
