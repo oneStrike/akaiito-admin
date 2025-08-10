@@ -1,14 +1,24 @@
 <script lang="ts" setup>
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {
+  CreateNoticeDto,
   NoticeDetailResponse,
   NoticePageResponseDto,
+  UpdateNoticeDto,
 } from '#/apis/types/notice';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
+import { message } from 'ant-design-vue';
+
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { clientPagePageApi, noticeDetailApi, noticePageApi } from '#/apis';
+import {
+  clientPagePageApi,
+  createNoticeApi,
+  noticeDetailApi,
+  noticePageApi,
+  updateNoticeApi,
+} from '#/apis';
 import EsModalForm from '#/components/es-modal-form/index.vue';
 import { useBitMask } from '#/hooks/useBitmask';
 import { createSearchFormOptions } from '#/utils/grid-form-config';
@@ -97,7 +107,18 @@ async function openFormModal(row?: NoticePageResponseDto) {
   if (row) {
     record = await noticeDetailApi({ id: row.id });
   }
-  formApi.setData({ title: '通知公告', record }).open();
+  formApi
+    .setData({ title: '通知公告', record, bitMaskField: ['enablePlatform'] })
+    .open();
+}
+
+async function handleSubmit(values: CreateNoticeDto | UpdateNoticeDto) {
+  await (values?.id
+    ? updateNoticeApi(values as UpdateNoticeDto)
+    : createNoticeApi(values as CreateNoticeDto));
+  formApi.close();
+  message.success('操作成功');
+  gridApi.reload();
 }
 </script>
 
@@ -140,6 +161,10 @@ async function openFormModal(row?: NoticePageResponseDto) {
       </template>
     </Grid>
 
-    <Form :record="currentRecord" :schema="formSchema" />
+    <Form
+      :record="currentRecord"
+      :schema="formSchema"
+      :on-submit="handleSubmit"
+    />
   </Page>
 </template>

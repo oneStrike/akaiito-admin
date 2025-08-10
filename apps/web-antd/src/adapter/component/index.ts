@@ -61,7 +61,6 @@ const TreeSelect = defineAsyncComponent(
 );
 const Upload = defineAsyncComponent(() => import('#/components/es-upload'));
 const RichText = defineAsyncComponent(() => import('#/components/es-editor'));
-
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
   type: 'input' | 'select',

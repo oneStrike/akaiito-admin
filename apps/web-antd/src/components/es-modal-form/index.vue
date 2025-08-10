@@ -4,6 +4,7 @@ import type { EsModalFormProps } from './types';
 import { useVbenModal } from '@vben/common-ui';
 
 import { useVbenForm } from '#/adapter/form';
+import { useBitMask } from '#/hooks/useBitmask';
 
 defineOptions({
   name: 'EsModalForm',
@@ -31,6 +32,15 @@ const [Modal, modalApi] = useVbenModal({
     if (isOpen) {
       sharedData.value = modalApi.getData<EsModalFormProps>();
       if (sharedData.value?.record) {
+        if (Array.isArray(sharedData.value?.bitMaskField)) {
+          sharedData.value.bitMaskField.forEach((field) => {
+            if (sharedData.value.record) {
+              sharedData.value.record[field] = sharedData.value.record[field]
+                ? useBitMask.split(sharedData.value.record[field])
+                : [];
+            }
+          });
+        }
         formApi.setValues(sharedData.value.record);
       }
     }
@@ -40,17 +50,29 @@ const [Modal, modalApi] = useVbenModal({
 const [BaseForm, formApi] = useVbenForm({
   layout: 'vertical',
   showDefaultActions: false,
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-4',
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-x-4',
   handleSubmit: async (values) => {
     modalApi.lock();
-    await props.onSubmit?.(values);
+
+    if (Array.isArray(sharedData.value.bitMaskField)) {
+      sharedData.value.bitMaskField.forEach((field) => {
+        if (values[field]) {
+          values[field] = useBitMask.set(values[field]);
+        }
+      });
+    }
+
+    await props.onSubmit?.({
+      ...values,
+      id: sharedData.value?.record?.id,
+    });
     modalApi.unlock();
   },
   schema: props.schema,
 });
 </script>
 <template>
-  <Modal :title="modalTitle" class="w-[800px]">
+  <Modal :title="modalTitle" class="w-[1000px]">
     <template #prepend-footer>
       <a-button @click="formApi.resetForm()">重置</a-button>
     </template>

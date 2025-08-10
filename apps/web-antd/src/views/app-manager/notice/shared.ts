@@ -107,7 +107,6 @@ export const formSchema: EsFormSchema = [
   },
   {
     label: '发布平台',
-
     fieldName: 'enablePlatform',
     component: 'CheckboxGroup',
     rules: 'required',
@@ -139,20 +138,16 @@ export const formSchema: EsFormSchema = [
     },
   },
   {
-    fieldName: 'popupBackgroundImage',
-    component: 'Upload',
-    label: '弹窗背景',
-    componentProps: {},
-  },
-  {
     label: '通知时间',
     fieldName: 'dateTimeRange',
     component: 'RangePicker',
     componentProps: {
+      class: 'w-full',
       disabledDate: (date: Date) =>
         new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0),
     },
   },
+
   {
     label: '是否置顶',
     fieldName: 'isPinned',
@@ -188,6 +183,12 @@ export const formSchema: EsFormSchema = [
         },
       ],
     },
+  },
+  {
+    fieldName: 'popupBackgroundImage',
+    component: 'Upload',
+    label: '弹窗背景',
+    componentProps: {},
   },
   {
     label: '内容',

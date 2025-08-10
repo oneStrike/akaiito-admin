@@ -55,9 +55,9 @@ const modelValue = defineModel({ type: String, default: '' });
 // 定义一个对象 init初始化
 const init = reactive({
   selector: `#${tinymceId.value}`, // 富文本编辑器的id,
-  language_url: '/public/libs/tinymce/langs/zh_CN.js', // 语言包的路径，具体路径看自己的项目
+  language_url: '/libs/tinymce/langs/zh_CN.js', // 语言包的路径，具体路径看自己的项目
   language: 'zh_CN',
-  skin_url: '/public/libs/tinymce/skins/ui/oxide', // skin路径，具体路径看自己的项目
+  skin_url: '/libs/tinymce/skins/ui/oxide', // skin路径，具体路径看自己的项目
   editable_root: props.editableRoot,
   height: 600,
   branding: false, // 是否禁用"Powered by TinyMCE"
