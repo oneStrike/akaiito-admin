@@ -45,7 +45,7 @@ clientPagePageApi({
       clientPageObj.value[pageItem.pageCode] = pageItem.pageName;
       return {
         label: pageItem.pageName,
-        value: pageItem.pageCode, // 使用 pageCode 作为 value
+        value: pageItem.pageCode,
         ...pageItem,
       };
     }) || [];
