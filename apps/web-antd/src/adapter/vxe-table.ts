@@ -22,6 +22,9 @@ setupVbenVxeTable({
           // 全局禁用vxe-table的表单配置，使用formOptions
           enabled: false,
         },
+        rowConfig: {
+          isHover: true,
+        },
         proxyConfig: {
           autoLoad: true,
           response: {
@@ -34,7 +37,7 @@ setupVbenVxeTable({
         },
         round: true,
         showOverflow: true,
-        size: 'large',
+        size: 'medium',
         pagerConfig: {
           pageSize: 15,
           pageSizes: [15, 30, 45, 75, 100],

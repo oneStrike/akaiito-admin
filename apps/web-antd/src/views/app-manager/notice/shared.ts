@@ -1,7 +1,7 @@
 import type { NoticePageResponseDto } from '#/apis/types/notice';
 import type { EsFormSchema } from '#/global';
 
-import { formSchemaTransform } from '#/utils/formSchemaTransform';
+import { formatUTC, formSchemaTransform } from '#/utils';
 
 export const noticeType = [
   {
@@ -84,6 +84,52 @@ for (const item of noticePriority) {
   };
 }
 
+// 发布状态配置
+export const publishStatus = [
+  {
+    label: '未发布',
+    value: 'unpublished',
+    color: '#8c8c8c', // 灰色
+  },
+  {
+    label: '已发布',
+    value: 'published',
+    color: '#52c41a', // 绿色
+  },
+  {
+    label: '已过期',
+    value: 'expired',
+    color: '#ff4d4f', // 红色
+  },
+];
+
+export const publishStatusObj: Record<
+  string,
+  { color: string; label: string }
+> = {};
+for (const item of publishStatus) {
+  publishStatusObj[item.value] = {
+    label: item.label,
+    color: item.color,
+  };
+}
+
+// 获取发布状态的函数
+export function getPublishStatus(
+  isPublished: boolean,
+  publishEndTime?: string,
+): string {
+  if (!isPublished) {
+    return 'unpublished';
+  }
+
+  if (publishEndTime && new Date(publishEndTime) < new Date()) {
+    return 'expired';
+  }
+
+  return 'published';
+}
+
 export const formSchema: EsFormSchema = [
   {
     component: 'Input',
@@ -143,6 +189,7 @@ export const formSchema: EsFormSchema = [
     component: 'RangePicker',
     componentProps: {
       class: 'w-full',
+      valueFormat: 'YYYY-MM-DD',
       disabledDate: (date: Date) =>
         new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0),
     },
@@ -218,9 +265,18 @@ export const noticeColumns =
     },
     actions: {
       show: true,
+      width: 230,
     },
     dateTimeRange: {
+      sort: 98,
+      formatter: ({ row }: any) => {
+        return `${formatUTC(row.publishStartTime, 'YYYY-MM-DD')} - ${formatUTC(row.publishEndTime, 'YYYY-MM-DD')}`;
+      },
+    },
+    publishStatus: {
+      title: '发布状态',
       sort: 99,
+      slots: { default: 'publishStatus' },
     },
     noticeType: {
       slots: { default: 'noticeType' },

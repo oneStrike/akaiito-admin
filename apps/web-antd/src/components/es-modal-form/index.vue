@@ -51,6 +51,8 @@ const [BaseForm, formApi] = useVbenForm({
   layout: 'vertical',
   showDefaultActions: false,
   wrapperClass: 'grid-cols-1 md:grid-cols-2 gap-x-4',
+  fieldMappingTime: props.fieldMappingTime,
+
   handleSubmit: async (values) => {
     modalApi.lock();
 

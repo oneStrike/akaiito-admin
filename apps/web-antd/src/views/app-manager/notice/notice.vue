@@ -2,7 +2,6 @@
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type {
   CreateNoticeDto,
-  NoticeDetailResponse,
   NoticePageResponseDto,
   UpdateNoticeDto,
 } from '#/apis/types/notice';
@@ -13,6 +12,8 @@ import { message } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
+  batchDeleteNoticeApi,
+  batchUpdateNoticeStatusApi,
   clientPagePageApi,
   createNoticeApi,
   noticeDetailApi,
@@ -26,13 +27,14 @@ import { createSearchFormOptions } from '#/utils/grid-form-config';
 import {
   enablePlatform,
   formSchema,
+  getPublishStatus,
   noticeColumns,
   noticeFilter,
   noticePriorityObj,
   noticeTypeObj,
+  publishStatusObj,
 } from './shared';
 
-const currentRecord = ref<NoticeDetailResponse>();
 const clientPageObj = ref<Record<string, string>>({});
 
 clientPagePageApi({
@@ -63,14 +65,8 @@ clientPagePageApi({
 });
 
 const gridOptions: VxeGridProps<NoticePageResponseDto> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
-  },
   columns: noticeColumns,
-  exportConfig: {},
   height: 'auto',
-  keepSource: true,
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues) => {
@@ -106,6 +102,7 @@ async function openFormModal(row?: NoticePageResponseDto) {
   let record;
   if (row) {
     record = await noticeDetailApi({ id: row.id });
+    record.dateTimeRange = [record.publishStartTime, record.publishEndTime];
   }
   formApi
     .setData({ title: '通知公告', record, bitMaskField: ['enablePlatform'] })
@@ -119,6 +116,39 @@ async function handleSubmit(values: CreateNoticeDto | UpdateNoticeDto) {
   formApi.close();
   message.success('操作成功');
   gridApi.reload();
+}
+
+async function deleteNotice(record: NoticePageResponseDto) {
+  await batchDeleteNoticeApi({ ids: [record.id] });
+  message.success('操作成功');
+  gridApi.reload();
+}
+
+async function togglePublishStatus(record: NoticePageResponseDto) {
+  const newStatus = !record.isPublished;
+  await batchUpdateNoticeStatusApi({
+    ids: [record.id],
+    isPublished: newStatus,
+  });
+  message.success(newStatus ? '发布成功' : '取消发布成功');
+  gridApi.reload();
+}
+
+function getPublishButtonText(record: NoticePageResponseDto): string {
+  const status = getPublishStatus(record.isPublished, record.publishEndTime);
+
+  if (status === 'unpublished') {
+    return '发布';
+  } else if (status === 'published') {
+    return '取消发布';
+  } else {
+    return '重新发布';
+  }
+}
+
+function canPublish(record: NoticePageResponseDto): boolean {
+  const status = getPublishStatus(record.isPublished, record.publishEndTime);
+  return status !== 'expired';
 }
 </script>
 
@@ -156,14 +186,78 @@ async function handleSubmit(values: CreateNoticeDto | UpdateNoticeDto) {
           }}
         </a-typography-text>
       </template>
+
+      <template #publishStatus="{ row }">
+        <a-typography-text
+          :style="{
+            color:
+              publishStatusObj[
+                getPublishStatus(row.isPublished, row.publishEndTime)
+              ]?.color,
+          }"
+        >
+          {{
+            publishStatusObj[
+              getPublishStatus(row.isPublished, row.publishEndTime)
+            ]?.label
+          }}
+        </a-typography-text>
+      </template>
       <template #actions="{ row }">
-        <a-button @click="openFormModal(row)">编辑</a-button>
+        <div class="my-1">
+          <a-button size="small" type="link" @click="openFormModal(row)">
+            编辑
+          </a-button>
+
+          <a-divider type="vertical" />
+          <a-popconfirm
+            v-if="canPublish(row)"
+            :title="
+              row.isPublished ? '确认取消发布当前通知?' : '确认发布当前通知?'
+            "
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="togglePublishStatus(row)"
+          >
+            <a-button
+              size="small"
+              type="link"
+              :style="{
+                color: canPublish(row) ? '#1890ff' : '#ff4d4f',
+              }"
+            >
+              {{ getPublishButtonText(row) }}
+            </a-button>
+          </a-popconfirm>
+          <a-button
+            v-else
+            size="small"
+            type="link"
+            disabled
+            :style="{
+              color: '#d9d9d9',
+            }"
+          >
+            {{ getPublishButtonText(row) }}
+          </a-button>
+          <a-divider type="vertical" />
+          <a-popconfirm
+            title="确认删除当前项?"
+            ok-text="确认"
+            cancel-text="取消"
+            @confirm="deleteNotice(row)"
+          >
+            <a-button type="link" danger>删除</a-button>
+          </a-popconfirm>
+        </div>
       </template>
     </Grid>
 
     <Form
-      :record="currentRecord"
       :schema="formSchema"
+      :field-mapping-time="[
+        ['dateTimeRange', ['publishStartTime', 'publishEndTime']],
+      ]"
       :on-submit="handleSubmit"
     />
   </Page>

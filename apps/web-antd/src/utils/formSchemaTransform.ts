@@ -78,7 +78,7 @@ export const formSchemaTransform: FormSchemaTransform = {
 
     for (const [i, item] of innerSchema.entries()) {
       const itemExtra = extra?.[item.fieldName];
-
+      delete extra?.[item.fieldName];
       if (!itemExtra?.hide) {
         columnsWithSort.push({
           title: item.label as string,
@@ -90,9 +90,6 @@ export const formSchemaTransform: FormSchemaTransform = {
         });
       }
     }
-
-    // 根据 sort 属性排序，没有 sort 的保持原有位置
-    sortItemsWithSortValue(columnsWithSort);
     if (extra?.actions && extra.actions.show) {
       columnsWithSort.push({
         title: '操作',
@@ -104,12 +101,26 @@ export const formSchemaTransform: FormSchemaTransform = {
         slots: { default: 'actions' },
         ...extra?.actions,
       });
+      delete extra.actions;
     }
+
+    if (extra && Object.keys(extra).length > 0) {
+      Object.values(extra).forEach((item) => {
+        columnsWithSort.push({
+          ...item,
+          originalIndex: item?.sort ?? -1,
+        });
+      });
+    }
+
+    // 根据 sort 属性排序，没有 sort 的保持原有位置
+    sortItemsWithSortValue(columnsWithSort);
 
     columnsWithSort.unshift({
       title: '序号',
       type: 'seq',
       width: 50,
+      fixed: 'left',
       originalIndex: -1,
     });
 
