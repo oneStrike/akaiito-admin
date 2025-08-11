@@ -730,6 +730,9 @@ importers:
 
   apps/web-ele:
     dependencies:
+      '@types/node-forge':
+        specifier: 'catalog:'
+        version: 1.3.13
       '@vben/access':
         specifier: workspace:*
         version: link:../../packages/effects/access

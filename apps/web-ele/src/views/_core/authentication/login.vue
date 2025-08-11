@@ -32,7 +32,7 @@ async function login(params: any) {
   });
   // 使用加密后的密码
   params.password = forge.util.encode64(encrypted);
-  authStore.authLogin(params);
+  await authStore.authLogin(params);
 }
 
 const formSchema = computed((): VbenFormSchema[] => {

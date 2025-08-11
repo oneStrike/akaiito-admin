@@ -76,7 +76,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout(redirect: boolean = true) {
     try {
-      await userLogoutApi();
+      await userLogoutApi({
+        accessToken: accessStore.accessToken as string,
+        refreshToken: accessStore.refreshToken as string,
+      });
     } catch {
       // 不做任何处理
     }
