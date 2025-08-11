@@ -45,7 +45,12 @@
     "element-plus": "catalog:",
     "pinia": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "node-forge": "catalog:",
+    "tinymce": "catalog:",
+    "unplugin-auto-import": "catalog:",
+    "unplugin-vue-components": "catalog:",
+    "lodash-es": "catalog:"
   },
   "devDependencies": {
     "unplugin-element-plus": "catalog:"

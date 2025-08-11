@@ -1,69 +1,46 @@
 <script lang="ts" setup>
 import type { VbenFormSchema } from '@vben/common-ui';
-import type { BasicOption } from '@vben/types';
 
-import { computed, markRaw } from 'vue';
-
-import { AuthenticationLogin, SliderCaptcha, z } from '@vben/common-ui';
+import { AuthenticationLogin, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
+import forge from 'node-forge';
+
+import { getCaptchaApi } from '#/apis';
 import { useAuthStore } from '#/store';
 
 defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
 
-const MOCK_USER_OPTIONS: BasicOption[] = [
-  {
-    label: 'Super',
-    value: 'vben',
-  },
-  {
-    label: 'Admin',
-    value: 'admin',
-  },
-  {
-    label: 'User',
-    value: 'jack',
-  },
-];
+const captchaData = ref();
+async function fetchCaptcha() {
+  captchaData.value = await getCaptchaApi();
+}
+fetchCaptcha();
+async function login(params: any) {
+  params.captchaId = captchaData.value?.id;
+  const publicKeyPEM = await authStore.getRsaPublicKey();
+
+  const publicKeyPem = forge.pki.publicKeyFromPem(publicKeyPEM);
+  // 使用OAEP填充进行加密
+  const encrypted = publicKeyPem.encrypt(params.password, 'RSA-OAEP', {
+    md: forge.md.sha256.create(), // 使用SHA-256作为哈希函数
+    mgf1: {
+      md: forge.md.sha256.create(), // 使用SHA-256作为MGF1的哈希函数
+    },
+  });
+  // 使用加密后的密码
+  params.password = forge.util.encode64(encrypted);
+  authStore.authLogin(params);
+}
 
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {
-      component: 'VbenSelect',
-      componentProps: {
-        options: MOCK_USER_OPTIONS,
-        placeholder: $t('authentication.selectAccount'),
-      },
-      fieldName: 'selectAccount',
-      label: $t('authentication.selectAccount'),
-      rules: z
-        .string()
-        .min(1, { message: $t('authentication.selectAccount') })
-        .optional()
-        .default('vben'),
-    },
-    {
       component: 'VbenInput',
       componentProps: {
         placeholder: $t('authentication.usernameTip'),
-      },
-      dependencies: {
-        trigger(values, form) {
-          if (values.selectAccount) {
-            const findUser = MOCK_USER_OPTIONS.find(
-              (item) => item.value === values.selectAccount,
-            );
-            if (findUser) {
-              form.setValues({
-                password: '123456',
-                username: findUser.value,
-              });
-            }
-          }
-        },
-        triggerFields: ['selectAccount'],
       },
       fieldName: 'username',
       label: $t('authentication.username'),
@@ -79,11 +56,31 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().min(1, { message: $t('authentication.passwordTip') }),
     },
     {
-      component: markRaw(SliderCaptcha),
+      component: 'VbenInput',
+      componentProps: {
+        placeholder: '请输入验证码',
+        maxlength: 4,
+      },
+      suffix: () =>
+        h(
+          'div',
+          {
+            class: 'flex items-center gap-2',
+          },
+          [
+            // 验证码图片
+            h('img', {
+              src: captchaData.value?.data,
+              alt: '验证码',
+              class: 'h-14 w-30 cursor-pointer',
+              onClick: fetchCaptcha,
+              title: '点击刷新验证码',
+            }),
+          ],
+        ),
       fieldName: 'captcha',
-      rules: z.boolean().refine((value) => value, {
-        message: $t('authentication.verifyRequiredTip'),
-      }),
+      label: '验证码',
+      rules: z.string().min(4, { message: '请输入正确的验证码' }),
     },
   ];
 });
@@ -93,6 +90,11 @@ const formSchema = computed((): VbenFormSchema[] => {
   <AuthenticationLogin
     :form-schema="formSchema"
     :loading="authStore.loginLoading"
-    @submit="authStore.authLogin"
+    :show-code-login="false"
+    :show-forget-password="false"
+    :show-qrcode-login="false"
+    :show-register="false"
+    :show-third-party-login="false"
+    @submit="login"
   />
 </template>

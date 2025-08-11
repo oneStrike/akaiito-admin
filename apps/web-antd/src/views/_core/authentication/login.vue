@@ -6,7 +6,7 @@ import { $t } from '@vben/locales';
 
 import forge from 'node-forge';
 
-import { getCaptchaApi, userRefreshTokenApi } from '#/apis';
+import { getCaptchaApi } from '#/apis';
 import { useAuthStore } from '#/store';
 
 defineOptions({ name: 'Login' });
@@ -18,7 +18,6 @@ async function fetchCaptcha() {
   captchaData.value = await getCaptchaApi();
 }
 fetchCaptcha();
-userRefreshTokenApi();
 async function login(params: any) {
   params.captchaId = captchaData.value?.id;
   const publicKeyPEM = await authStore.getRsaPublicKey();

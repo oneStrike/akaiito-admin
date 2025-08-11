@@ -53,8 +53,6 @@
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vue": "catalog:",
-    "vue-router": "catalog:",
-    "tdesign-vue-next": "catalog:",
-    "@tdesign-vue-next/auto-import-resolver": "catalog:"
+    "vue-router": "catalog:"
   }
 }
