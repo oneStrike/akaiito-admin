@@ -21,16 +21,14 @@ export interface EsUploadProps {
   name?: string;
   /** 限制文件大小（单位：字节） */
   maxSize?: number;
-  /** 是否启用批量上传模式 */
-  batchUpload?: boolean;
-  /** 批量上传时每批次的文件数量限制 */
-  batchSize?: number;
   /** 是否自动上传（false时需要手动触发上传） */
   autoUpload?: boolean;
   /** 是否显示上传进度 */
   showProgress?: boolean;
   /** 进度条样式 */
   progressProps?: Record<string, any>;
+  /** 上传文件的返回数据类型 */
+  returnDataType?: 'array' | 'json' | 'url';
 }
 
 export interface BatchUploadStatus {

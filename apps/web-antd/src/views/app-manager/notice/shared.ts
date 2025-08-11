@@ -235,7 +235,10 @@ export const formSchema: EsFormSchema = [
     fieldName: 'popupBackgroundImage',
     component: 'Upload',
     label: '弹窗背景',
-    componentProps: {},
+    componentProps: {
+      maxCount: 1,
+      returnDataType: 'url',
+    },
   },
   {
     label: '内容',

@@ -23,12 +23,10 @@ const props = withDefaults(defineProps<EsUploadProps>(), {
   listType: 'picture-card',
   multiple: true,
   maxSize: 200 * 1024 * 1024, // 默认200MB，单位为字节
-  batchUpload: true,
-  batchSize: 5,
-  batchInterval: 1000,
   autoUpload: true,
   showProgress: true,
   modelValue: () => [],
+  returnDataType: 'url',
 });
 
 const emit = defineEmits<{
@@ -36,11 +34,10 @@ const emit = defineEmits<{
 }>();
 
 const fileList = ref<UploadFile[]>([]);
-let fileListDataType: 'array' | 'json' | 'url' = 'url';
+const fileListDataType: EsUploadProps['returnDataType'] = props.returnDataType;
 
 function formatFileList(files: EsUploadProps['modelValue']) {
   if (Array.isArray(files)) {
-    fileListDataType = 'array';
     files.forEach((file) => {
       if (typeof file === 'string') {
         formatFileList(file);
@@ -73,9 +70,14 @@ function formatFileList(files: EsUploadProps['modelValue']) {
   }
 }
 
-const modelValueWatch = watch(
+let skipModalValueWatch = false;
+watch(
   () => props.modelValue,
   (val) => {
+    if (skipModalValueWatch) {
+      skipModalValueWatch = false;
+      return;
+    }
     fileList.value = [];
     formatFileList(val);
   },
@@ -102,7 +104,7 @@ function handlerModalValue() {
 
   let data;
   if (fileListDataType === 'url') {
-    data = fileList.value[0]?.response?.filePath;
+    data = fileList.value.map((item) => item.response.filePath).join(',');
   } else if (fileListDataType === 'array') {
     data = fileList.value.map((item) => item.response?.filePath);
   } else {
@@ -130,9 +132,8 @@ async function customRequest(params: Record<string, any>) {
     return;
   }
   params.onSuccess(success[0]);
-  modelValueWatch.pause();
+  skipModalValueWatch = true;
   handlerModalValue();
-  modelValueWatch.resume();
 }
 </script>
 
