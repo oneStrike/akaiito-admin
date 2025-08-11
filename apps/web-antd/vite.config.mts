@@ -1,5 +1,6 @@
 import { defineConfig } from '@vben/vite-config';
 
+import { TDesignResolver } from '@tdesign-vue-next/auto-import-resolver';
 import AutoImport from 'unplugin-auto-import/vite';
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
@@ -11,7 +12,7 @@ export default defineConfig(async () => {
       plugins: [
         AutoImport({
           imports: ['vue', '@vueuse/core', 'pinia', 'vue-router'],
-          resolvers: [AntDesignVueResolver()],
+          resolvers: [AntDesignVueResolver(), TDesignResolver()],
         }),
         Components({
           dirs: ['src/components'],
@@ -20,6 +21,7 @@ export default defineConfig(async () => {
             AntDesignVueResolver({
               importStyle: false,
             }),
+            TDesignResolver(),
           ],
         }),
       ],

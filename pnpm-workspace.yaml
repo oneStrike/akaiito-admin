@@ -200,3 +200,5 @@ catalog:
   '@tinymce/tinymce-vue': ^6.3.0
   lodash-es: ^4.17.21
   '@types/lodash-es': ^4.17.12
+  'tdesign-vue-next': ^1.15.2
+  '@tdesign-vue-next/auto-import-resolver': ^0.1.1
