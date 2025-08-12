@@ -26,6 +26,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@types/node-forge": "catalog:",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -41,17 +42,16 @@
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
-    "@types/node-forge": "catalog:",
     "dayjs": "catalog:",
     "element-plus": "catalog:",
-    "pinia": "catalog:",
-    "vue": "catalog:",
-    "vue-router": "catalog:",
+    "lodash-es": "catalog:",
     "node-forge": "catalog:",
+    "pinia": "catalog:",
     "tinymce": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
-    "lodash-es": "catalog:"
+    "vue": "catalog:",
+    "vue-router": "catalog:"
   },
   "devDependencies": {
     "unplugin-element-plus": "catalog:"

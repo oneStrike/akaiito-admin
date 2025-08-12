@@ -1,5 +1,5 @@
 import type { VxeGridPropTypes } from '#/adapter/vxe-table';
-import type { EsFormSchema } from '#/global';
+import type { EsFormSchema } from '#/types';
 
 import { cloneDeep } from 'lodash-es';
 

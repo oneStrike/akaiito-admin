@@ -8,8 +8,6 @@ import type {
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { message } from 'ant-design-vue';
-
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   batchDeleteNoticeApi,
@@ -22,6 +20,7 @@ import {
 } from '#/apis';
 import EsModalForm from '#/components/es-modal-form/index.vue';
 import { useBitMask } from '#/hooks/useBitmask';
+import { useMessage } from '#/hooks/useFeedback';
 import { createSearchFormOptions } from '#/utils/grid-form-config';
 
 import {
@@ -114,13 +113,13 @@ async function handleSubmit(values: CreateNoticeDto | UpdateNoticeDto) {
     ? updateNoticeApi(values as UpdateNoticeDto)
     : createNoticeApi(values as CreateNoticeDto));
   formApi.close();
-  message.success('操作成功');
+  useMessage.success('操作成功');
   gridApi.reload();
 }
 
 async function deleteNotice(record: NoticePageResponseDto) {
   await batchDeleteNoticeApi({ ids: [record.id] });
-  message.success('操作成功');
+  useMessage.success('操作成功');
   gridApi.reload();
 }
 
@@ -130,7 +129,7 @@ async function togglePublishStatus(record: NoticePageResponseDto) {
     ids: [record.id],
     isPublished: newStatus,
   });
-  message.success(newStatus ? '发布成功' : '取消发布成功');
+  useMessage.success(newStatus ? '发布成功' : '取消发布成功');
   gridApi.reload();
 }
 
@@ -156,39 +155,37 @@ function canPublish(record: NoticePageResponseDto): boolean {
   <Page auto-content-height>
     <Grid>
       <template #toolbar-actions>
-        <a-button class="ml-2" type="primary" @click="openFormModal()">
+        <el-button class="ml-2" type="primary" @click="openFormModal()">
           添加
-        </a-button>
+        </el-button>
       </template>
       <template #noticeType="{ row }">
-        <a-typography-text
-          :style="{ color: noticeTypeObj[row.noticeType]?.color }"
-        >
+        <el-text :style="{ color: noticeTypeObj[row.noticeType]?.color }">
           {{ noticeTypeObj[row.noticeType]?.label }}
-        </a-typography-text>
+        </el-text>
       </template>
       <template #priorityLevel="{ row }">
-        <a-typography-text
+        <el-text
           :style="{ color: noticePriorityObj[row.priorityLevel]?.color }"
         >
           {{ noticePriorityObj[row.priorityLevel]?.label }}
-        </a-typography-text>
+        </el-text>
       </template>
       <template #pageCode="{ row }">
-        <a-typography-text>
+        <el-text>
           {{ row.pageCode ? clientPageObj[row.pageCode] : '-' }}
-        </a-typography-text>
+        </el-text>
       </template>
       <template #enablePlatform="{ row }">
-        <a-typography-text>
+        <el-text>
           {{
             useBitMask.getLabels(row.enablePlatform, enablePlatform).join('、')
           }}
-        </a-typography-text>
+        </el-text>
       </template>
 
       <template #publishStatus="{ row }">
-        <a-typography-text
+        <el-text
           :style="{
             color:
               publishStatusObj[
@@ -201,16 +198,16 @@ function canPublish(record: NoticePageResponseDto): boolean {
               getPublishStatus(row.isPublished, row.publishEndTime)
             ]?.label
           }}
-        </a-typography-text>
+        </el-text>
       </template>
       <template #actions="{ row }">
         <div class="my-1">
-          <a-button size="small" type="link" @click="openFormModal(row)">
+          <el-button size="small" type="link" @click="openFormModal(row)">
             编辑
-          </a-button>
+          </el-button>
 
-          <a-divider type="vertical" />
-          <a-popconfirm
+          <el-divider type="vertical" />
+          <el-popconfirm
             v-if="canPublish(row)"
             :title="
               row.isPublished ? '确认取消发布当前通知?' : '确认发布当前通知?'
@@ -219,7 +216,7 @@ function canPublish(record: NoticePageResponseDto): boolean {
             cancel-text="取消"
             @confirm="togglePublishStatus(row)"
           >
-            <a-button
+            <el-button
               size="small"
               type="link"
               :style="{
@@ -227,9 +224,9 @@ function canPublish(record: NoticePageResponseDto): boolean {
               }"
             >
               {{ getPublishButtonText(row) }}
-            </a-button>
-          </a-popconfirm>
-          <a-button
+            </el-button>
+          </el-popconfirm>
+          <el-button
             v-else
             size="small"
             type="link"
@@ -239,16 +236,16 @@ function canPublish(record: NoticePageResponseDto): boolean {
             }"
           >
             {{ getPublishButtonText(row) }}
-          </a-button>
-          <a-divider type="vertical" />
-          <a-popconfirm
+          </el-button>
+          <el-divider type="vertical" />
+          <el-popconfirm
             title="确认删除当前项?"
             ok-text="确认"
             cancel-text="取消"
             @confirm="deleteNotice(row)"
           >
-            <a-button type="link" danger>删除</a-button>
-          </a-popconfirm>
+            <el-button type="link" danger>删除</el-button>
+          </el-popconfirm>
         </div>
       </template>
     </Grid>

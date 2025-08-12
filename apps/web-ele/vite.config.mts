@@ -1,6 +1,7 @@
 import { defineConfig } from '@vben/vite-config';
 
 import AutoImport from 'unplugin-auto-import/vite';
+import ElementPlus from 'unplugin-element-plus/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 
@@ -17,6 +18,9 @@ export default defineConfig(async () => {
           dirs: ['src/components'],
           directoryAsNamespace: false,
           resolvers: [ElementPlusResolver()],
+        }),
+        ElementPlus({
+          format: 'esm',
         }),
       ],
       server: {

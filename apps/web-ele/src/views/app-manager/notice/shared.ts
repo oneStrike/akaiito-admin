@@ -1,5 +1,5 @@
 import type { NoticePageResponseDto } from '#/apis/types/notice';
-import type { EsFormSchema } from '#/global';
+import type { EsFormSchema } from '#/types';
 
 import { formatUTC, formSchemaTransform } from '#/utils';
 
@@ -186,12 +186,12 @@ export const formSchema: EsFormSchema = [
   {
     label: '通知时间',
     fieldName: 'dateTimeRange',
-    component: 'RangePicker',
+    component: 'DatePicker',
     componentProps: {
-      class: 'w-full',
+      type: 'daterange',
+      startPlaceholder: '请选择开始时间',
+      endPlaceholder: '请选择结束时间',
       valueFormat: 'YYYY-MM-DD',
-      disabledDate: (date: Date) =>
-        new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0),
     },
   },
 
